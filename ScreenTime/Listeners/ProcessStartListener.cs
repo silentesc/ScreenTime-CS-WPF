@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using ScreenTime.Classes;
+using System.Diagnostics;
 using System.Management;
 using System.Runtime.InteropServices;
 
@@ -19,19 +20,14 @@ namespace ScreenTime.Listeners
 
             try
             {
-                if (process.MainModule == null) // TODO AccessDenied Exception
-                {
-                    Debug.WriteLine($"[!] {processId} | {process.ProcessName} MainModule is null");
-                    return;
-                }
+                if (process.MainModule == null) return;
 
-                Debug.WriteLine($"[+] {processId} | {process.ProcessName} | {process.MainModule.FileName}");
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Exception: {ex.Message}");
-            }
+                string processName = process.ProcessName;
+                string path = process.MainModule.FileName;
 
+                ScreenTimeApp.Create(processName, path, 0, 0);
+            }
+            catch (Exception) { }
         }
     }
 }
