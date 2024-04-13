@@ -1,5 +1,5 @@
-﻿using System.Windows;
-using Testing;
+﻿using ScreenTime.Listeners;
+using System.Windows;
 
 namespace ScreenTime
 {
@@ -11,7 +11,7 @@ namespace ScreenTime
         {
             base.OnStartup(e);
 
-            // Start listeners
+            // Start process listeners
 
             ProcessStartListener startListener = new();
             startListener.Start();
@@ -20,6 +20,11 @@ namespace ScreenTime
             ProcessExitListener exitListener = new();
             exitListener.Start();
             processWatcherBases.Add(exitListener);
+
+            // Start periodically listeners
+
+            FocusChangeListener focusChangeListener = new();
+            focusChangeListener.Start();
         }
 
         protected override void OnExit(ExitEventArgs e)

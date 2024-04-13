@@ -1,7 +1,7 @@
 ﻿using System.Management;
 using System.Runtime.InteropServices;
 
-namespace Testing
+namespace ScreenTime.Listeners
 {
     internal abstract class ProcessWatcherBase
     {

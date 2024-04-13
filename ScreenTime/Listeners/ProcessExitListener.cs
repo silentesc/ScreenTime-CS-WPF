@@ -2,7 +2,7 @@
 using System.Management;
 using System.Runtime.InteropServices;
 
-namespace Testing
+namespace ScreenTime.Listeners
 {
     internal class ProcessExitListener : ProcessWatcherBase
     {

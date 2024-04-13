@@ -2,7 +2,7 @@
 using System.Management;
 using System.Runtime.InteropServices;
 
-namespace Testing
+namespace ScreenTime.Listeners
 {
     internal class ProcessStartListener : ProcessWatcherBase
     {
@@ -15,7 +15,23 @@ namespace Testing
             int processId = Convert.ToInt32(((ManagementBaseObject)e.NewEvent["TargetInstance"])["ProcessId"]);
             Process process = Process.GetProcessById(processId);
 
-            Debug.WriteLine($"[+] {processId} | {process.ProcessName}");
+            if (process == null) return;
+
+            try
+            {
+                if (process.MainModule == null) // TODO AccessDenied Exception
+                {
+                    Debug.WriteLine($"[!] {processId} | {process.ProcessName} MainModule is null");
+                    return;
+                }
+
+                Debug.WriteLine($"[+] {processId} | {process.ProcessName} | {process.MainModule.FileName}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Exception: {ex.Message}");
+            }
+
         }
     }
 }
