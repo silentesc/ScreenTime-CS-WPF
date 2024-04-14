@@ -1,5 +1,4 @@
-﻿using ScreenTime.Classes;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Management;
 using System.Runtime.InteropServices;
 
@@ -24,8 +23,6 @@ namespace ScreenTime.Listeners
 
                 string processName = process.ProcessName;
                 string path = process.MainModule.FileName;
-
-                ScreenTimeApp.Create(processName, path, 0, 0);
             }
             catch (Exception) { }
         }

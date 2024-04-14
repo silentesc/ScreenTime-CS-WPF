@@ -1,7 +1,4 @@
-﻿using ScreenTime.Classes;
-using ScreenTime.Listeners;
-using ScreenTime.utils;
-using System.Diagnostics;
+﻿using ScreenTime.Listeners;
 using System.Windows;
 
 namespace ScreenTime
@@ -13,24 +10,6 @@ namespace ScreenTime
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-
-            // Load apps from file into apps
-            StorageUtils.LoadAppsFromFile();
-
-            // Load processes into apps
-            foreach (Process process in Process.GetProcesses())
-            {
-                try
-                {
-                    if (process.MainModule == null) continue;
-
-                    string processName = process.ProcessName;
-                    string path = process.MainModule.FileName;
-
-                    ScreenTimeApp.Create(processName, path, 0, 0);
-                }
-                catch (Exception) { }
-            }
 
             // Start process listeners
 
@@ -57,9 +36,6 @@ namespace ScreenTime
             {
                 processWatcher.Stop();
             }
-
-            // Save apps to json file
-            StorageUtils.SaveAppsToFile(ScreenTimeApp.apps);
         }
     }
 }
