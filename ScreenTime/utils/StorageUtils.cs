@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using ScreenTime.classes;
 using System.IO;
 
 namespace ScreenTime.utils

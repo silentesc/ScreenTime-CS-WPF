@@ -23,6 +23,8 @@ namespace ScreenTime.Listeners
 
                 string processName = process.ProcessName;
                 string path = process.MainModule.FileName;
+
+                Debug.WriteLine($"[+] {processId} | {processName}");
             }
             catch (Exception) { }
         }

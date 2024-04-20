@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using ScreenTime.classes;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace ScreenTime.Listeners
@@ -11,7 +12,7 @@ namespace ScreenTime.Listeners
         [DllImport("user32.dll")]
         private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint pdwProcessId);
 
-        private readonly int sleepDelayMillis = 1000;
+        private readonly int sleepDelaySeconds = 1;
 
         public void Start()
         {
@@ -21,15 +22,21 @@ namespace ScreenTime.Listeners
 
                 while (true)
                 {
-                    Thread.Sleep(sleepDelayMillis);
+                    Thread.Sleep(sleepDelaySeconds * 1000);
 
                     IntPtr foregroundWindowHandle = GetForegroundWindow();
                     _ = GetWindowThreadProcessId(foregroundWindowHandle, out uint processId);
                     Process foregroundProcess = Process.GetProcessById((int)processId);
 
-                    if (lastProcessId == processId) continue;
-                    OnFocusChange(lastProcessId, (int)processId);
-                    lastProcessId = (int)processId;
+                    if (lastProcessId == processId)
+                    {
+                        OnFocusKeep(lastProcessId, sleepDelaySeconds);
+                    }
+                    else
+                    {
+                        OnFocusChange(lastProcessId, (int)processId);
+                        lastProcessId = (int)processId;
+                    }
                 }
             })
             {
@@ -39,11 +46,40 @@ namespace ScreenTime.Listeners
             listener.Start();
         }
 
+        // Called when the periodical check occurs and the process is still the same
+        private void OnFocusKeep(int processId, int keptFocusSeconds)
+        {
+            Process foregroundProcess = Process.GetProcessById(processId);
+            ProcessModule? processModule = null;
+
+            try
+            {
+                processModule = foregroundProcess.MainModule;
+            }
+            catch { }
+
+            if (processModule == null) return;
+
+            ScreenTimeApp screenTimeApp = ScreenTimeApp.CreateOrGetScreenTimeApp(foregroundProcess.ProcessName, processModule.FileName);
+            screenTimeApp.IncreaseFocusSeconds((uint)keptFocusSeconds);
+        }
+
+        // Called when the focus changes from one process to another
         private void OnFocusChange(int lastProcessId, int processId)
         {
             Process foregroundProcess = Process.GetProcessById(processId);
+            ProcessModule? processModule = null;
 
-            Debug.WriteLine($"Process changed to {foregroundProcess.ProcessName}");
+            try
+            {
+                processModule = foregroundProcess.MainModule;
+            }
+            catch { }
+
+            if (processModule == null) return;
+
+            ScreenTimeApp screenTimeApp = ScreenTimeApp.CreateOrGetScreenTimeApp(foregroundProcess.ProcessName, processModule.FileName);
+            screenTimeApp.IncreaseFocusCount();
         }
     }
 }
