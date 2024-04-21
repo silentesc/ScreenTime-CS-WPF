@@ -12,17 +12,15 @@ namespace ScreenTime.classes
         public Dictionary<string, uint> SecondsInFocus { get; private set; }
         public Dictionary<string, uint> TimesFocused { get; private set; }
         public Dictionary<string, uint> TimesOpened { get; private set; }
-        public Dictionary<string, uint> TimesClosed { get; private set; }
 
         [JsonConstructor]
-        private ScreenTimeApp(string name, string path, Dictionary<string, uint> secondsInFocus, Dictionary<string, uint> timesFocused, Dictionary<string, uint> timesOpened, Dictionary<string, uint> timesClosed)
+        private ScreenTimeApp(string name, string path, Dictionary<string, uint> secondsInFocus, Dictionary<string, uint> timesFocused, Dictionary<string, uint> timesOpened)
         {
             Name = name;
             Path = path;
             SecondsInFocus = secondsInFocus;
             TimesFocused = timesFocused;
             TimesOpened = timesOpened;
-            TimesClosed = timesClosed;
 
             screenTimeApps.Add(this);
         }
@@ -36,7 +34,7 @@ namespace ScreenTime.classes
                     return app;
                 }
             }
-            return new ScreenTimeApp(name, path, [], [], [], []);
+            return new ScreenTimeApp(name, path, [], [], []);
         }
 
         public void IncreaseSecondsInFocus(uint seconds)
@@ -72,18 +70,6 @@ namespace ScreenTime.classes
             else
             {
                 TimesOpened.Add(DateTimeUtils.CurrentDate(), 1);
-            }
-        }
-
-        public void IncreaseTimesClosed()
-        {
-            if (TimesClosed.ContainsKey(DateTimeUtils.CurrentDate()))
-            {
-                TimesClosed[DateTimeUtils.CurrentDate()] += 1;
-            }
-            else
-            {
-                TimesClosed.Add(DateTimeUtils.CurrentDate(), 1);
             }
         }
     }
