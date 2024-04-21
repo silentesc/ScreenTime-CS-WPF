@@ -5,36 +5,35 @@ namespace ScreenTime.classes
 {
     internal class ScreenTimeApp
     {
-        public static List<ScreenTimeApp> screenTimeApps = [];
+        public static Dictionary<string, ScreenTimeApp> screenTimeApps = [];
 
         public string Name { get; private set; }
         public string Path { get; private set; }
         public Dictionary<string, uint> SecondsInFocus { get; private set; }
+        public Dictionary<string, uint> SecondsInBackground { get; private set; }
         public Dictionary<string, uint> TimesFocused { get; private set; }
         public Dictionary<string, uint> TimesOpened { get; private set; }
 
         [JsonConstructor]
-        private ScreenTimeApp(string name, string path, Dictionary<string, uint> secondsInFocus, Dictionary<string, uint> timesFocused, Dictionary<string, uint> timesOpened)
+        private ScreenTimeApp(string name, string path, Dictionary<string, uint> secondsInFocus, Dictionary<string, uint> secondsInBackground, Dictionary<string, uint> timesFocused, Dictionary<string, uint> timesOpened)
         {
             Name = name;
             Path = path;
             SecondsInFocus = secondsInFocus;
+            SecondsInBackground = secondsInBackground;
             TimesFocused = timesFocused;
             TimesOpened = timesOpened;
 
-            screenTimeApps.Add(this);
+            screenTimeApps.Add(Path, this);
         }
 
         public static ScreenTimeApp CreateOrGetScreenTimeApp(string name, string path)
         {
-            foreach (var app in screenTimeApps)
+            if (screenTimeApps.TryGetValue(path, out ScreenTimeApp? screenTimeApp) && screenTimeApp != null)
             {
-                if (app.Path == path)
-                {
-                    return app;
-                }
+                return screenTimeApp;
             }
-            return new ScreenTimeApp(name, path, [], [], []);
+            return new ScreenTimeApp(name, path, [], [], [], []);
         }
 
         public void IncreaseSecondsInFocus(uint seconds)
@@ -46,6 +45,18 @@ namespace ScreenTime.classes
             else
             {
                 SecondsInFocus.Add(DateTimeUtils.CurrentDate(), seconds);
+            }
+        }
+
+        public void IncreaseSecondsInBackground(uint seconds)
+        {
+            if (SecondsInBackground.ContainsKey(DateTimeUtils.CurrentDate()))
+            {
+                SecondsInBackground[DateTimeUtils.CurrentDate()] += seconds;
+            }
+            else
+            {
+                SecondsInBackground.Add(DateTimeUtils.CurrentDate(), seconds);
             }
         }
 

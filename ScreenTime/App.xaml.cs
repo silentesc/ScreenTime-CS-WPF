@@ -45,7 +45,7 @@ namespace ScreenTime
                 processWatcher.Stop();
             }
 
-            StorageUtils.SaveAppsToFile(ScreenTimeApp.screenTimeApps);
+            StorageUtils.SaveAppsToFile(ScreenTimeApp.screenTimeApps.Values.ToList());
         }
 
         void OnDispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
@@ -55,7 +55,7 @@ namespace ScreenTime
                 processWatcher.Stop();
             }
 
-            StorageUtils.SaveAppsToFile(ScreenTimeApp.screenTimeApps);
+            StorageUtils.SaveAppsToFile(ScreenTimeApp.screenTimeApps.Values.ToList());
 
             e.Handled = true;
         }

@@ -37,6 +37,28 @@ namespace ScreenTime.Listeners
                         OnFocusChange(lastProcessId, (int)processId);
                         lastProcessId = (int)processId;
                     }
+
+                    // Increase background seconds
+                    foreach (Process process in Process.GetProcesses())
+                    {
+                        if (process.Id == processId) continue;
+                        if (string.IsNullOrEmpty(process.MainWindowTitle) || process.MainWindowHandle == IntPtr.Zero) continue;
+
+                        ProcessModule? processModule = null;
+
+                        try
+                        {
+                            processModule = process.MainModule;
+                        }
+                        catch { }
+
+                        if (processModule == null) continue;
+
+                        if (ScreenTimeApp.screenTimeApps.TryGetValue(processModule.FileName, out ScreenTimeApp? screenTimeApp))
+                        {
+                            screenTimeApp.IncreaseSecondsInBackground((uint)sleepDelaySeconds);
+                        }
+                    }
                 }
             })
             {

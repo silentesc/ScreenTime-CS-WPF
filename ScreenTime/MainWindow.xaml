@@ -5,8 +5,54 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ScreenTime"
         mc:Ignorable="d"
-        Title="ScreenTime" Height="450" Width="800">
+        Title="ScreenTime"
+        Height="900"
+        Width="1600"
+        Background="#36393e"
+        WindowStartupLocation="CenterScreen">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="150"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <!--Date navigation-->
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <Image Grid.Column="0"
+                   Source="arrow_left.png"
+                   Width="40"
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Center"
+                   MouseDown="Image_MouseDown_Back"/>
+
+            <TextBlock Grid.Column="1"
+                       x:Name="TextBlockDate"
+                       Text="01.01.2001"
+                       Foreground="White"
+                       FontSize="40"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"/>
+
+            <Image Grid.Column="2"
+                   Source="arrow_right.png"
+                   Width="40"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Center"
+                   MouseDown="Image_MouseDown_Forward"/>
+        </Grid>
         
+        <!--Content-->
+        <Grid Grid.Row="1">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel x:Name="StackPanelDynamic"
+                            HorizontalAlignment="Center"/>
+            </ScrollViewer>
+        </Grid>
     </Grid>
 </Window>
