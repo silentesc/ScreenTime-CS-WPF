@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using ScreenTime.utils;
 
 namespace ScreenTime.classes
 {
@@ -8,20 +9,20 @@ namespace ScreenTime.classes
 
         public string Name { get; private set; }
         public string Path { get; private set; }
-        public uint SecondsInFocus { get; private set; }
-        public uint TimesFocused { get; private set; }
-        /* TODO
-         * how long in focus a day (like in iOS settings when you can skip through days)
-         * how often focused a day (like in iOS settings when you can skip through days)
-         */
+        public Dictionary<string, uint> SecondsInFocus { get; private set; }
+        public Dictionary<string, uint> TimesFocused { get; private set; }
+        public Dictionary<string, uint> TimesOpened { get; private set; }
+        public Dictionary<string, uint> TimesClosed { get; private set; }
 
         [JsonConstructor]
-        private ScreenTimeApp(string name, string path, uint secondsInFocus, uint timesFocused)
+        private ScreenTimeApp(string name, string path, Dictionary<string, uint> secondsInFocus, Dictionary<string, uint> timesFocused, Dictionary<string, uint> timesOpened, Dictionary<string, uint> timesClosed)
         {
             Name = name;
             Path = path;
             SecondsInFocus = secondsInFocus;
             TimesFocused = timesFocused;
+            TimesOpened = timesOpened;
+            TimesClosed = timesClosed;
 
             screenTimeApps.Add(this);
         }
@@ -35,17 +36,55 @@ namespace ScreenTime.classes
                     return app;
                 }
             }
-            return new ScreenTimeApp(name, path, 0, 0);
+            return new ScreenTimeApp(name, path, [], [], [], []);
         }
 
-        public void IncreaseFocusSeconds(uint seconds)
+        public void IncreaseSecondsInFocus(uint seconds)
         {
-            SecondsInFocus += seconds;
+            if (SecondsInFocus.ContainsKey(DateTimeUtils.CurrentDate()))
+            {
+                SecondsInFocus[DateTimeUtils.CurrentDate()] += seconds;
+            }
+            else
+            {
+                SecondsInFocus.Add(DateTimeUtils.CurrentDate(), seconds);
+            }
         }
 
-        public void IncreaseFocusCount()
+        public void IncreaseTimesFocused()
         {
-            TimesFocused += 1;
+            if (TimesFocused.ContainsKey(DateTimeUtils.CurrentDate()))
+            {
+                TimesFocused[DateTimeUtils.CurrentDate()] += 1;
+            }
+            else
+            {
+                TimesFocused.Add(DateTimeUtils.CurrentDate(), 1);
+            }
+        }
+
+        public void IncreaseTimesOpened()
+        {
+            if (TimesOpened.ContainsKey(DateTimeUtils.CurrentDate()))
+            {
+                TimesOpened[DateTimeUtils.CurrentDate()] += 1;
+            }
+            else
+            {
+                TimesOpened.Add(DateTimeUtils.CurrentDate(), 1);
+            }
+        }
+
+        public void IncreaseTimesClosed()
+        {
+            if (TimesClosed.ContainsKey(DateTimeUtils.CurrentDate()))
+            {
+                TimesClosed[DateTimeUtils.CurrentDate()] += 1;
+            }
+            else
+            {
+                TimesClosed.Add(DateTimeUtils.CurrentDate(), 1);
+            }
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Management;
+﻿using System.Management;
 using System.Runtime.InteropServices;
 
 namespace ScreenTime.Listeners
@@ -14,8 +13,6 @@ namespace ScreenTime.Listeners
 
             int processId = Convert.ToInt32(((ManagementBaseObject)e.NewEvent["TargetInstance"])["ProcessId"]);
             string? processName = ((ManagementBaseObject)e.NewEvent["TargetInstance"])["Name"].ToString();
-
-            Debug.WriteLine($"[-] {processId} | {processName}");
         }
     }
 }

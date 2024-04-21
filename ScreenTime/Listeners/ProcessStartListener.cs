@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using ScreenTime.classes;
+using System.Diagnostics;
 using System.Management;
 using System.Runtime.InteropServices;
 
@@ -14,19 +15,18 @@ namespace ScreenTime.Listeners
 
             int processId = Convert.ToInt32(((ManagementBaseObject)e.NewEvent["TargetInstance"])["ProcessId"]);
             Process process = Process.GetProcessById(processId);
-
-            if (process == null) return;
+            ProcessModule? processModule = null;
 
             try
             {
-                if (process.MainModule == null) return;
-
-                string processName = process.ProcessName;
-                string path = process.MainModule.FileName;
-
-                Debug.WriteLine($"[+] {processId} | {processName}");
+                processModule = process.MainModule;
             }
-            catch (Exception) { }
+            catch { }
+
+            if (processModule == null) return;
+
+            ScreenTimeApp screenTimeApp = ScreenTimeApp.CreateOrGetScreenTimeApp(process.ProcessName, processModule.FileName);
+            screenTimeApp.IncreaseTimesOpened();
         }
     }
 }

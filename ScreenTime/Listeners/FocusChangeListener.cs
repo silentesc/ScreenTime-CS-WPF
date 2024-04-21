@@ -61,7 +61,7 @@ namespace ScreenTime.Listeners
             if (processModule == null) return;
 
             ScreenTimeApp screenTimeApp = ScreenTimeApp.CreateOrGetScreenTimeApp(foregroundProcess.ProcessName, processModule.FileName);
-            screenTimeApp.IncreaseFocusSeconds((uint)keptFocusSeconds);
+            screenTimeApp.IncreaseSecondsInFocus((uint)keptFocusSeconds);
         }
 
         // Called when the focus changes from one process to another
@@ -79,7 +79,7 @@ namespace ScreenTime.Listeners
             if (processModule == null) return;
 
             ScreenTimeApp screenTimeApp = ScreenTimeApp.CreateOrGetScreenTimeApp(foregroundProcess.ProcessName, processModule.FileName);
-            screenTimeApp.IncreaseFocusCount();
+            screenTimeApp.IncreaseTimesFocused();
         }
     }
 }

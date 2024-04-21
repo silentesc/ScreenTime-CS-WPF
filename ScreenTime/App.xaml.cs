@@ -22,9 +22,9 @@ namespace ScreenTime
 
             // Start process listeners
 
-            //ProcessStartListener startListener = new();
-            //startListener.Start();
-            //processWatcherBases.Add(startListener);
+            ProcessStartListener startListener = new();
+            startListener.Start();
+            processWatcherBases.Add(startListener);
 
             //ProcessExitListener exitListener = new();
             //exitListener.Start();
