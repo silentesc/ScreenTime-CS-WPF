@@ -14,20 +14,20 @@ namespace ScreenTime.Listeners
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return;
 
             int processId = Convert.ToInt32(((ManagementBaseObject)e.NewEvent["TargetInstance"])["ProcessId"]);
-            Process process = Process.GetProcessById(processId); // FIXME sometimes System.ArgumentException: 'Process with an Id of 10196 is not running.'
+            Process? process = null;
             ProcessModule? processModule = null;
 
             try
             {
+                process = Process.GetProcessById(processId);
                 processModule = process.MainModule;
-            }
-            catch { }
+            } catch { }
 
-            if (processModule == null) return;
+            if (process == null || processModule == null) return;
 
             if (ScreenTimeApp.screenTimeApps.TryGetValue(processModule.FileName, out ScreenTimeApp? screenTimeApp) && screenTimeApp != null)
             {
-                screenTimeApp.IncreaseTimesOpened();
+                screenTimeApp.IncreaseTimesOpened(1);
             }
         }
     }

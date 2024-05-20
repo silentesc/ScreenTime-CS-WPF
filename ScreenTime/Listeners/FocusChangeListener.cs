@@ -101,7 +101,7 @@ namespace ScreenTime.Listeners
             if (processModule == null) return;
 
             ScreenTimeApp screenTimeApp = ScreenTimeApp.CreateOrGetScreenTimeApp(foregroundProcess.ProcessName, processModule.FileName);
-            screenTimeApp.IncreaseTimesFocused();
+            screenTimeApp.IncreaseTimesFocused(1);
         }
     }
 }

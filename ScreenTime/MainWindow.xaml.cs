@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using ScreenTime.classes;
+using System.Diagnostics;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
@@ -10,18 +12,25 @@ namespace ScreenTime
         {
             InitializeComponent();
 
-            for (int i = 0; i < 100; i++)
+            List<ScreenTimeApp> apps = ScreenTimeApp.GetScreenTimeAppsByDateSorted("09.05.2024", SortMode.SECONDS_IN_FOCUS, true);
+
+            foreach (ScreenTimeApp app in apps)
             {
-                AddElementDynamically($"Hallo {i}");
+                Debug.WriteLine(app.Name + " | " + app.SecondsInFocus.GetValueOrDefault("09.05.2024"));
+            }
+
+            foreach (ScreenTimeApp screenTimeApp in ScreenTimeApp.screenTimeApps.Values)
+            {
+                AddScreenTimeAppToMainScreen(screenTimeApp);
             }
         }
 
-        private void AddElementDynamically(string text)
+        private void AddScreenTimeAppToMainScreen(ScreenTimeApp screenTimeApp)
         {
             // Create the new TextBlock
             TextBlock newTextBlock = new()
             {
-                Text = text,
+                Text = screenTimeApp.Name,
                 Foreground = Brushes.White,
                 FontSize = 30
             };
