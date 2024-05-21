@@ -4,6 +4,13 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
+/*
+ * TODO:
+ * - Better UI (Time marker, not aligned to center so it doesn't jump)
+ * - Ability to change app name so its not bound to process name
+ * - Refactor code (clean code, date stuff not string)
+ */
+
 namespace ScreenTime
 {
     public partial class MainWindow : Window
