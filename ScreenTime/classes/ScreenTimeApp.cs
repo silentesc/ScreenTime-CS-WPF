@@ -46,61 +46,54 @@ namespace ScreenTime.classes
             return new ScreenTimeApp(name, path, [], [], [], []);
         }
 
-        public static List<ScreenTimeApp> GetScreenTimeAppsByDate(string date)
+        // Sorted, longest time
+        public static List<ScreenTimeApp> GetScreenTimeAppsByDateSorted(string date, SortMode sortMode, bool reversed)
         {
             List<ScreenTimeApp> appsForDate = [];
 
             foreach (ScreenTimeApp screenTimeApp in screenTimeApps.Values)
             {
-                if (screenTimeApp.SecondsInFocus.ContainsKey(date) ||
-                    screenTimeApp.SecondsInBackground.ContainsKey(date) ||
-                    screenTimeApp.TimesFocused.ContainsKey(date) ||
-                    screenTimeApp.TimesOpened.ContainsKey(date))
+                if (screenTimeApp.SecondsInFocus.ContainsKey(date) && sortMode == SortMode.SECONDS_IN_FOCUS ||
+                    screenTimeApp.SecondsInBackground.ContainsKey(date) && sortMode == SortMode.SECONDS_IN_BACKGROUND ||
+                    screenTimeApp.TimesFocused.ContainsKey(date) && sortMode == SortMode.TIMES_FOCUSED ||
+                    screenTimeApp.TimesOpened.ContainsKey(date) && sortMode == SortMode.TIMES_OPENED)
                 {
                     appsForDate.Add(screenTimeApp);
                 }
             }
 
-            return appsForDate;
-        }
-
-        // Sorted, longest time
-        public static List<ScreenTimeApp> GetScreenTimeAppsByDateSorted(string date, SortMode sortMode, bool reversed)
-        {
-            List<ScreenTimeApp> apps = GetScreenTimeAppsByDate(date);
-
             switch (sortMode)
             {
                 case SortMode.SECONDS_IN_FOCUS:
                     if (reversed)
-                        apps.Sort((x, y) => y.SecondsInFocus.GetValueOrDefault(date).CompareTo(x.SecondsInFocus.GetValueOrDefault(date)));
+                        appsForDate.Sort((x, y) => y.SecondsInFocus.GetValueOrDefault(date).CompareTo(x.SecondsInFocus.GetValueOrDefault(date)));
                     else
-                        apps.Sort((x, y) => x.SecondsInFocus.GetValueOrDefault(date).CompareTo(y.SecondsInFocus.GetValueOrDefault(date)));
+                        appsForDate.Sort((x, y) => x.SecondsInFocus.GetValueOrDefault(date).CompareTo(y.SecondsInFocus.GetValueOrDefault(date)));
                     break;
                 
                 case SortMode.SECONDS_IN_BACKGROUND:
                     if (reversed)
-                        apps.Sort((x, y) => y.SecondsInBackground.GetValueOrDefault(date).CompareTo(x.SecondsInBackground.GetValueOrDefault(date)));
+                        appsForDate.Sort((x, y) => y.SecondsInBackground.GetValueOrDefault(date).CompareTo(x.SecondsInBackground.GetValueOrDefault(date)));
                     else
-                        apps.Sort((x, y) => x.SecondsInBackground.GetValueOrDefault(date).CompareTo(y.SecondsInBackground.GetValueOrDefault(date)));
+                        appsForDate.Sort((x, y) => x.SecondsInBackground.GetValueOrDefault(date).CompareTo(y.SecondsInBackground.GetValueOrDefault(date)));
                     break;
 
                 case SortMode.TIMES_FOCUSED:
                     if (reversed)
-                        apps.Sort((x, y) => y.TimesFocused.GetValueOrDefault(date).CompareTo(x.TimesFocused.GetValueOrDefault(date)));
+                        appsForDate.Sort((x, y) => y.TimesFocused.GetValueOrDefault(date).CompareTo(x.TimesFocused.GetValueOrDefault(date)));
                     else
-                        apps.Sort((x, y) => x.TimesFocused.GetValueOrDefault(date).CompareTo(y.TimesFocused.GetValueOrDefault(date)));
+                        appsForDate.Sort((x, y) => x.TimesFocused.GetValueOrDefault(date).CompareTo(y.TimesFocused.GetValueOrDefault(date)));
                     break;
 
                 case SortMode.TIMES_OPENED:
                     if (reversed)
-                        apps.Sort((x, y) => y.TimesOpened.GetValueOrDefault(date).CompareTo(x.TimesOpened.GetValueOrDefault(date)));
+                        appsForDate.Sort((x, y) => y.TimesOpened.GetValueOrDefault(date).CompareTo(x.TimesOpened.GetValueOrDefault(date)));
                     else
-                        apps.Sort((x, y) => x.TimesOpened.GetValueOrDefault(date).CompareTo(y.TimesOpened.GetValueOrDefault(date)));
+                        appsForDate.Sort((x, y) => x.TimesOpened.GetValueOrDefault(date).CompareTo(y.TimesOpened.GetValueOrDefault(date)));
                     break;
             }
 
-            return apps;
+            return appsForDate;
         }
 
         public void IncreaseSecondsInFocus(uint seconds)
