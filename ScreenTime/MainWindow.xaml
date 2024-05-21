@@ -51,7 +51,7 @@
 
         <!--Content-->
         <Grid Grid.Row="1">
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
 
                 <StackPanel x:Name="StackPanelDynamic"
                             HorizontalAlignment="Center"/>

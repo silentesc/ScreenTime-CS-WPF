@@ -51,15 +51,20 @@ namespace ScreenTime
             List<ScreenTimeApp> focusedAppsToday = ScreenTimeApp.GetScreenTimeAppsByDateSorted(dateString, SortMode.SECONDS_IN_FOCUS, true);
             uint totalScreenTimeSeconds = (uint)focusedAppsToday.Sum(app => app.SecondsInFocus.GetValueOrDefault(dateString));
 
-            foreach (ScreenTimeApp screenTimeApp in focusedAppsToday)
+            if (focusedAppsToday.Count > 0)
             {
-                AddScreenTimeAppToMainScreen(screenTimeApp, dateString, totalScreenTimeSeconds);
+                uint maxScreenTimeAppSeconds = focusedAppsToday.Max(app => app.SecondsInFocus.GetValueOrDefault(dateString));
+
+                foreach (ScreenTimeApp screenTimeApp in focusedAppsToday)
+                {
+                    AddScreenTimeAppToMainScreen(screenTimeApp, dateString, maxScreenTimeAppSeconds);
+                }
             }
 
             TextBlockDate.Text = dateString;
         }
 
-        private void AddScreenTimeAppToMainScreen(ScreenTimeApp screenTimeApp, string todayDate, uint totalScreenTimeSeconds)
+        private void AddScreenTimeAppToMainScreen(ScreenTimeApp screenTimeApp, string todayDate, uint maxScreenTimeAppSeconds)
         {
             string screenTimeAppName = screenTimeApp.Name;
             if (screenTimeAppName.Length > 16) screenTimeAppName = screenTimeAppName[..16] + "...";
@@ -71,7 +76,7 @@ namespace ScreenTime
             uint hoursInFocus = minutesInFocus / 60;
             string screenTimeAppTimeInFocus;
             if (hoursInFocus > 0)
-                screenTimeAppTimeInFocus = string.Format("{0}h {1}m", hoursInFocus, minutesInFocus);
+                screenTimeAppTimeInFocus = string.Format("{0}h {1}m", hoursInFocus, minutesInFocus % 60);
             else if (minutesInFocus > 0)
                 screenTimeAppTimeInFocus = string.Format("{0}m {1}s", minutesInFocus, secondsInFocus);
             else
@@ -105,7 +110,7 @@ namespace ScreenTime
             Rectangle progressRect = new Rectangle
             {
                 Style = (Style)FindResource("CustomProgressBarStyle"),
-                Width = CalculateProgressWidth(screenTimeAppSecondsInFocus, totalScreenTimeSeconds)
+                Width = CalculateProgressWidth(screenTimeAppSecondsInFocus, maxScreenTimeAppSeconds)
             };
 
             // Create the new arrow icon
@@ -142,7 +147,6 @@ namespace ScreenTime
             Grid.SetRowSpan(arrowIcon, 2);
             Grid.SetColumn(arrowIcon, 3);
 
-
             grid.Children.Add(progressRect);
             grid.Children.Add(textBlockScreenTimeAppName);
             grid.Children.Add(textBlockScreenTimeAppSecondsInFocus);
@@ -152,10 +156,10 @@ namespace ScreenTime
             StackPanelDynamic.Children.Add(border);
         }
 
-        private double CalculateProgressWidth(uint currentProgress, uint totalProgress)
+        private double CalculateProgressWidth(uint currentProgress, uint maxProgress)
         {
-            double progressPercentage = (double)currentProgress / totalProgress;
-            double maxWidth = 700;
+            double progressPercentage = (double)currentProgress / maxProgress;
+            double maxWidth = 550;
             return progressPercentage * maxWidth;
         }
     }
