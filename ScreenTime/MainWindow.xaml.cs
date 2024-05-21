@@ -1,15 +1,10 @@
-﻿using ScreenTime.classes;
+﻿using FontAwesome.WPF;
+using ScreenTime.classes;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-
-/*
- * TODO:
- * - Better UI (Time marker, not aligned to center so it doesn't jump)
- * - Ability to change app name so its not bound to process name
- * - Refactor code (clean code, date stuff not string)
- */
+using System.Windows.Shapes;
 
 namespace ScreenTime
 {
@@ -54,21 +49,23 @@ namespace ScreenTime
             StackPanelDynamic.Children.Clear();
 
             List<ScreenTimeApp> focusedAppsToday = ScreenTimeApp.GetScreenTimeAppsByDateSorted(dateString, SortMode.SECONDS_IN_FOCUS, true);
+            uint totalScreenTimeSeconds = (uint)focusedAppsToday.Sum(app => app.SecondsInFocus.GetValueOrDefault(dateString));
 
             foreach (ScreenTimeApp screenTimeApp in focusedAppsToday)
             {
-                AddScreenTimeAppToMainScreen(screenTimeApp, dateString);
+                AddScreenTimeAppToMainScreen(screenTimeApp, dateString, totalScreenTimeSeconds);
             }
 
             TextBlockDate.Text = dateString;
         }
 
-        private void AddScreenTimeAppToMainScreen(ScreenTimeApp screenTimeApp, string todayDate)
+        private void AddScreenTimeAppToMainScreen(ScreenTimeApp screenTimeApp, string todayDate, uint totalScreenTimeSeconds)
         {
             string screenTimeAppName = screenTimeApp.Name;
             if (screenTimeAppName.Length > 16) screenTimeAppName = screenTimeAppName[..16] + "...";
 
             uint screenTimeAppSecondsInFocus = screenTimeApp.SecondsInFocus.GetValueOrDefault(todayDate);
+
             uint secondsInFocus = screenTimeAppSecondsInFocus % 60;
             uint minutesInFocus = screenTimeAppSecondsInFocus / 60;
             uint hoursInFocus = minutesInFocus / 60;
@@ -83,28 +80,83 @@ namespace ScreenTime
             Grid grid = new();
             grid.RowDefinitions.Add(new RowDefinition());
             grid.RowDefinitions.Add(new RowDefinition());
+            grid.RowDefinitions.Add(new RowDefinition());
 
-            // Create the new TextBlock
+            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
+            grid.ColumnDefinitions.Add(new ColumnDefinition());
+            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto }); // Add this line for the arrow column
+
+            // Create the new TextBlocks
             TextBlock textBlockScreenTimeAppName = new()
             {
                 Text = screenTimeAppName,
                 Foreground = Brushes.White,
                 FontSize = 30
             };
+
             TextBlock textBlockScreenTimeAppSecondsInFocus = new()
             {
                 Text = screenTimeAppTimeInFocus,
                 Foreground = Brushes.White,
-                FontSize = 30
+                FontSize = 26
             };
 
+            // Create the new Rectangle
+            Rectangle progressRect = new Rectangle
+            {
+                Style = (Style)FindResource("CustomProgressBarStyle"),
+                Width = CalculateProgressWidth(screenTimeAppSecondsInFocus, totalScreenTimeSeconds)
+            };
+
+            // Create the new arrow icon
+            FontAwesome.WPF.FontAwesome arrowIcon = new FontAwesome.WPF.FontAwesome
+            {
+                Icon = FontAwesomeIcon.AngleRight,
+                Foreground = Brushes.White,
+                FontSize = 50,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            // Add elements to the grid
             Grid.SetRow(textBlockScreenTimeAppName, 0);
+            Grid.SetColumn(textBlockScreenTimeAppName, 0);
+            Grid.SetColumnSpan(textBlockScreenTimeAppName, 3); // Span across all columns
+
+            Grid.SetColumn(textBlockScreenTimeAppSecondsInFocus, 1);
             Grid.SetRow(textBlockScreenTimeAppSecondsInFocus, 1);
+
+            Grid.SetRow(progressRect, 1);
+            Grid.SetColumnSpan(progressRect, 1);
+            Grid.SetColumn(progressRect, 0);
+
+            Grid.SetRow(arrowIcon, 0);
+            Grid.SetRowSpan(arrowIcon, 2);
+            Grid.SetColumn(arrowIcon, 3);
+
+
+            grid.Children.Add(progressRect);
             grid.Children.Add(textBlockScreenTimeAppName);
             grid.Children.Add(textBlockScreenTimeAppSecondsInFocus);
+            grid.Children.Add(arrowIcon);
 
-            // Add to the dynamicStackPanel
-            StackPanelDynamic.Children.Add(grid);
+            // Create and configure border for the entire item
+            Border border = new Border
+            {
+                Width = 700,
+                Style = (Style)FindResource("CustomBorderStyle"),
+                Child = grid
+            };
+
+            // Add border to the dynamicStackPanel
+            StackPanelDynamic.Children.Add(border);
+        }
+
+        private double CalculateProgressWidth(uint currentProgress, uint totalProgress)
+        {
+            double progressPercentage = (double)currentProgress / totalProgress;
+            double maxWidth = 700;
+            return progressPercentage * maxWidth;
         }
     }
 }

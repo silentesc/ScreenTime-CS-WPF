@@ -7,9 +7,11 @@
         mc:Ignorable="d"
         Title="ScreenTime"
         Height="900"
-        Width="1600"
+        Width="1300"
         Background="#36393e"
         WindowStartupLocation="CenterScreen">
+
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="150"/>
@@ -46,10 +48,11 @@
                    VerticalAlignment="Center"
                    MouseDown="Image_MouseDown_Forward"/>
         </Grid>
-        
+
         <!--Content-->
         <Grid Grid.Row="1">
             <ScrollViewer VerticalScrollBarVisibility="Auto">
+
                 <StackPanel x:Name="StackPanelDynamic"
                             HorizontalAlignment="Center"/>
             </ScrollViewer>
