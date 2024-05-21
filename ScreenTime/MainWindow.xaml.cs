@@ -1,8 +1,10 @@
 ﻿using FontAwesome.WPF;
 using ScreenTime.classes;
 using System.Globalization;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
@@ -12,10 +14,10 @@ namespace ScreenTime
     {
         private readonly string dateFormat = "dd.MM.yyyy";
         private string dateString;
+
         public MainWindow()
         {
             InitializeComponent();
-
             dateString = DateTime.Now.ToString(dateFormat);
             SetScreenTimeAppsForMainScreen();
         }
@@ -67,7 +69,7 @@ namespace ScreenTime
         private void AddScreenTimeAppToMainScreen(ScreenTimeApp screenTimeApp, string todayDate, uint maxScreenTimeAppSeconds)
         {
             string screenTimeAppName = screenTimeApp.Name;
-            if (screenTimeAppName.Length > 16) screenTimeAppName = screenTimeAppName[..16] + "...";
+            if (screenTimeAppName.Length > 35) screenTimeAppName = screenTimeAppName[..35] + "...";
 
             uint screenTimeAppSecondsInFocus = screenTimeApp.SecondsInFocus.GetValueOrDefault(todayDate);
 
@@ -107,7 +109,7 @@ namespace ScreenTime
             };
 
             // Create the new Rectangle
-            Rectangle progressRect = new Rectangle
+            Rectangle progressRect = new()
             {
                 Style = (Style)FindResource("CustomProgressBarStyle"),
                 Width = CalculateProgressWidth(screenTimeAppSecondsInFocus, maxScreenTimeAppSeconds)
@@ -123,8 +125,37 @@ namespace ScreenTime
                 VerticalAlignment = VerticalAlignment.Center
             };
 
+            // Define the hover colors
+            Brush originalColor = Brushes.White;
+            Brush hoverColor = Brushes.DarkGray;
+
+            // Set the original color
+            arrowIcon.Foreground = originalColor;
+
+            // MouseEnter event handler for hover effect
+            arrowIcon.MouseEnter += (sender, e) =>
+            {
+                Cursor = Cursors.Hand;
+                arrowIcon.Foreground = hoverColor;
+            };
+
+            // Assign a click event handler
+            arrowIcon.MouseDown += (sender, e) =>
+            {
+                AppInfoWindow appInfoWindow = new(screenTimeApp, todayDate);
+                appInfoWindow.Show();
+            };
+
+
+            // MouseLeave event handler to revert to original color
+            arrowIcon.MouseLeave += (sender, e) =>
+            {
+                Cursor = Cursors.Arrow;
+                arrowIcon.Foreground = originalColor;
+            };
+
             // Create border for the entire item
-            Border border = new Border
+            Border border = new()
             {
                 Width = 700,
                 Style = (Style)FindResource("CustomBorderStyle"),
