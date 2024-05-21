@@ -84,7 +84,7 @@ namespace ScreenTime
 
             grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
             grid.ColumnDefinitions.Add(new ColumnDefinition());
-            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto }); // Add this line for the arrow column
+            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
 
             // Create the new TextBlocks
             TextBlock textBlockScreenTimeAppName = new()
@@ -118,10 +118,18 @@ namespace ScreenTime
                 VerticalAlignment = VerticalAlignment.Center
             };
 
+            // Create border for the entire item
+            Border border = new Border
+            {
+                Width = 700,
+                Style = (Style)FindResource("CustomBorderStyle"),
+                Child = grid
+            };
+
             // Add elements to the grid
             Grid.SetRow(textBlockScreenTimeAppName, 0);
             Grid.SetColumn(textBlockScreenTimeAppName, 0);
-            Grid.SetColumnSpan(textBlockScreenTimeAppName, 3); // Span across all columns
+            Grid.SetColumnSpan(textBlockScreenTimeAppName, 3);
 
             Grid.SetColumn(textBlockScreenTimeAppSecondsInFocus, 1);
             Grid.SetRow(textBlockScreenTimeAppSecondsInFocus, 1);
@@ -139,14 +147,6 @@ namespace ScreenTime
             grid.Children.Add(textBlockScreenTimeAppName);
             grid.Children.Add(textBlockScreenTimeAppSecondsInFocus);
             grid.Children.Add(arrowIcon);
-
-            // Create and configure border for the entire item
-            Border border = new Border
-            {
-                Width = 700,
-                Style = (Style)FindResource("CustomBorderStyle"),
-                Child = grid
-            };
 
             // Add border to the dynamicStackPanel
             StackPanelDynamic.Children.Add(border);
