@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
 namespace ScreenTime
@@ -51,7 +52,6 @@ namespace ScreenTime
             StackPanelDynamic.Children.Clear();
 
             List<ScreenTimeApp> focusedAppsToday = ScreenTimeApp.GetScreenTimeAppsByDateSorted(dateString, SortMode.SECONDS_IN_FOCUS, true);
-            uint totalScreenTimeSeconds = (uint)focusedAppsToday.Sum(app => app.SecondsInFocus.GetValueOrDefault(dateString));
 
             if (focusedAppsToday.Count > 0)
             {
@@ -115,6 +115,7 @@ namespace ScreenTime
                 Width = CalculateProgressWidth(screenTimeAppSecondsInFocus, maxScreenTimeAppSeconds)
             };
 
+
             // Create the new arrow icon
             FontAwesome.WPF.FontAwesome arrowIcon = new FontAwesome.WPF.FontAwesome
             {
@@ -124,6 +125,7 @@ namespace ScreenTime
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center
             };
+
 
             // Define the hover colors
             Brush originalColor = Brushes.White;

@@ -4,11 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ScreenTime"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         mc:Ignorable="d"
         Title="ScreenTime"
         Height="900"
         Width="1300"
-        Background="#36393e"
+        Background="#FF191B1D"
         WindowStartupLocation="CenterScreen">
 
 
@@ -31,7 +32,20 @@
                    Width="40"
                    HorizontalAlignment="Right"
                    VerticalAlignment="Center"
-                   MouseDown="Image_MouseDown_Back"/>
+                   MouseDown="Image_MouseDown_Back"
+                   x:Name="ImageBack">
+                        <Image.Style>
+                            <Style TargetType="Image">
+                                <Setter Property="Opacity" Value="1"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Opacity" Value="0.7"/>
+                                        <Setter Property="Cursor" Value="Hand"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Image.Style>
+                    </Image>
 
             <TextBlock Grid.Column="1"
                        x:Name="TextBlockDate"
@@ -46,7 +60,20 @@
                    Width="40"
                    HorizontalAlignment="Left"
                    VerticalAlignment="Center"
-                   MouseDown="Image_MouseDown_Forward"/>
+                   MouseDown="Image_MouseDown_Forward"
+                   x:Name="ImageForward">
+                        <Image.Style>
+                            <Style TargetType="Image">
+                                <Setter Property="Opacity" Value="1"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Opacity" Value="0.7"/>
+                                        <Setter Property="Cursor" Value="Hand"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Image.Style>
+                    </Image>
         </Grid>
 
         <!--Content-->
