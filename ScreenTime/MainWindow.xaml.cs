@@ -1,13 +1,11 @@
-﻿using FontAwesome.WPF;
-using ScreenTime.classes;
+﻿using ScreenTime.classes;
 using System.Globalization;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Wpf.Ui.Controls;
 
 namespace ScreenTime
 {
@@ -31,7 +29,6 @@ namespace ScreenTime
             DateTime date = DateTime.ParseExact(dateString, dateFormat, CultureInfo.InvariantCulture);
             date = date.AddDays(-1);
             dateString = date.ToString(dateFormat);
-
             SetScreenTimeAppsForMainScreen();
         }
 
@@ -51,12 +48,16 @@ namespace ScreenTime
         private void Image_MouseDown_Forward(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             DateTime date = DateTime.ParseExact(dateString, dateFormat, CultureInfo.InvariantCulture);
-            date = date.AddDays(1);
-            dateString = date.ToString(dateFormat);
-
-            ImageForward.FontSize = 60;
-            
-            SetScreenTimeAppsForMainScreen();
+            if (date >= DateTime.Now.Date)
+            {
+                // Do nothing
+            }
+            else
+            {
+                date = date.AddDays(1);
+                dateString = date.ToString(dateFormat);
+                SetScreenTimeAppsForMainScreen();
+            }
         }
 
         private void Image_MouseHover_Forward(object sender, MouseEventArgs e)
@@ -121,14 +122,14 @@ namespace ScreenTime
             grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
 
             // Create the new TextBlocks
-            TextBlock textBlockScreenTimeAppName = new()
+            System.Windows.Controls.TextBlock textBlockScreenTimeAppName = new()
             {
                 Text = screenTimeAppName,
                 Foreground = Brushes.White,
                 FontSize = 30
             };
 
-            TextBlock textBlockScreenTimeAppSecondsInFocus = new()
+            System.Windows.Controls.TextBlock textBlockScreenTimeAppSecondsInFocus = new()
             {
                 Text = screenTimeAppTimeInFocus,
                 Foreground = Brushes.White,
@@ -144,43 +145,12 @@ namespace ScreenTime
 
 
             // Create the new arrow icon
-            FontAwesome.WPF.FontAwesome arrowIcon = new FontAwesome.WPF.FontAwesome
+            var arrowIcon = new SymbolIcon
             {
-                Icon = FontAwesomeIcon.AngleRight,
+                Symbol = SymbolRegular.TriangleRight12,
                 Foreground = Brushes.White,
-                FontSize = 50,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center
-            };
-
-
-            // Define the hover colors
-            Brush originalColor = Brushes.White;
-            Brush hoverColor = Brushes.DarkGray;
-
-            // Set the original color
-            arrowIcon.Foreground = originalColor;
-
-            // MouseEnter event handler for hover effect
-            arrowIcon.MouseEnter += (sender, e) =>
-            {
-                Cursor = Cursors.Hand;
-                arrowIcon.Foreground = hoverColor;
-            };
-
-            // Assign a click event handler
-            arrowIcon.MouseDown += (sender, e) =>
-            {
-                AppInfoWindow appInfoWindow = new(screenTimeApp, todayDate);
-                appInfoWindow.Show();
-            };
-
-
-            // MouseLeave event handler to revert to original color
-            arrowIcon.MouseLeave += (sender, e) =>
-            {
-                Cursor = Cursors.Arrow;
-                arrowIcon.Foreground = originalColor;
             };
 
             // Create border for the entire item
@@ -190,6 +160,35 @@ namespace ScreenTime
                 Style = (Style)FindResource("CustomBorderStyle"),
                 Child = grid
             };
+
+            // Define the hover colors
+            Brush originalColor = Brushes.White;
+            Brush hoverColor = Brushes.DarkGray;
+
+            // Set the original color
+            arrowIcon.Foreground = originalColor;
+
+            // MouseEnter event handler for hover effect
+            border.MouseEnter += (sender, e) =>
+            {
+                Cursor = Cursors.Hand;
+                arrowIcon.Foreground = hoverColor;
+            };
+
+            // Assign a click event handler
+            border.MouseDown += (sender, e) =>
+            {
+                AppInfoWindow appInfoWindow = new(screenTimeApp, todayDate);
+                appInfoWindow.Show();
+            };
+
+            // MouseLeave event handler to revert to original color
+            border.MouseLeave += (sender, e) =>
+            {
+                Cursor = Cursors.Arrow;
+                arrowIcon.Foreground = originalColor;
+            };
+
 
             // Add elements to the grid
             Grid.SetRow(textBlockScreenTimeAppName, 0);

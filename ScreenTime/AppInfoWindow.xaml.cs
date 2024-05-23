@@ -1,6 +1,5 @@
 ﻿using ScreenTime.classes;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -13,9 +12,6 @@ namespace ScreenTime
             InitializeComponent();
             AddAppInfoToMainScreen(screenTimeApp, date);
         }
-
-
-
 
         private void AddAppInfoToMainScreen(ScreenTimeApp screenTimeApp, string date)
         {
@@ -55,33 +51,32 @@ namespace ScreenTime
             uint timesFocused = screenTimeApp.TimesFocused.GetValueOrDefault(date);
             uint timesOpened = screenTimeApp.TimesOpened.GetValueOrDefault(date);
 
-            Path.Text = appPath;
+            PathTextBlock.Text = appPath;
             AppInfWindow.Title = appName;
-            TimesFocused.Text = timesFocused.ToString();
-            TimesOpened.Text = timesOpened.ToString();
-            AppName.Text = appName;
-            SecondsInFocus.Text = screenTimeAppTimeInFocus;
-            SecondsInBackground.Text = screenTimeAppTimeInBackground;
+            TimesFocusedTextBlock.Text = timesFocused.ToString();
+            TimesOpenedTextBlock.Text = timesOpened.ToString();
+            AppNameTextBlock.Text = appName;
+            SecondsInFocusTextBlock.Text = screenTimeAppTimeInFocus;
+            SecondsInBackgroundTextBlock.Text = screenTimeAppTimeInBackground;
 
-            ShowInFolder.MouseDown += (s, e) =>
+            ShowInFolderBtn.MouseDown += (s, e) =>
             {
                 System.Diagnostics.Process.Start("explorer.exe", $"/select, \"{appPath}\"");
             };
 
-            ShowInFolder.MouseEnter += (s, e) =>
+            ShowInFolderBtn.MouseEnter += (s, e) =>
             {
                 Cursor = Cursors.Hand;
 
-                ShowInFolder.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF8A8A8A"));
+                ShowInFolderBtn.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF8A8A8A"));
             };
 
-            ShowInFolder.MouseLeave += (s, e) =>
+            ShowInFolderBtn.MouseLeave += (s, e) =>
             {
                 Cursor = Cursors.Arrow;
 
-                ShowInFolder.Foreground = new SolidColorBrush(Colors.White);
+                ShowInFolderBtn.Foreground = new SolidColorBrush(Colors.White);
             };
-
         }
     }
 }
