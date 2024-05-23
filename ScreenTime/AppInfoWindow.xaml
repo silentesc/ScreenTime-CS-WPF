@@ -251,9 +251,40 @@
                                Grid.ColumnSpan="1"
                                Grid.Row="5"
                                HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
                                FontSize="20"
-                               Foreground="White"/>
-
+                               Foreground="White"
+                               RenderTransformOrigin="0.5,0.5">
+                                    <ui:SymbolIcon.RenderTransform>
+                                        <ScaleTransform x:Name="ScaleTransform" ScaleX="1" ScaleY="1"/>
+                                    </ui:SymbolIcon.RenderTransform>
+                                    <ui:SymbolIcon.Triggers>
+                                        <EventTrigger RoutedEvent="MouseEnter">
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <DoubleAnimation Storyboard.TargetName="ScaleTransform" 
+                                                     Storyboard.TargetProperty="ScaleX" 
+                                                     To="1.2" Duration="0:0:0.2"/>
+                                                    <DoubleAnimation Storyboard.TargetName="ScaleTransform" 
+                                                     Storyboard.TargetProperty="ScaleY" 
+                                                     To="1.2" Duration="0:0:0.2"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                        <EventTrigger RoutedEvent="MouseLeave">
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <DoubleAnimation Storyboard.TargetName="ScaleTransform" 
+                                                     Storyboard.TargetProperty="ScaleX" 
+                                                     To="1" Duration="0:0:0.2"/>
+                                                    <DoubleAnimation Storyboard.TargetName="ScaleTransform" 
+                                                     Storyboard.TargetProperty="ScaleY" 
+                                                     To="1" Duration="0:0:0.2"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                    </ui:SymbolIcon.Triggers>
+                                </ui:SymbolIcon>
             </Grid>
         </ScrollViewer>
     </Grid>

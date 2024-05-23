@@ -27,25 +27,15 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
-            <Image Grid.Column="0"
-                   Source="arrow_left.png"
-                   Width="40"
-                   HorizontalAlignment="Right"
-                   VerticalAlignment="Center"
-                   MouseDown="Image_MouseDown_Back"
-                   x:Name="ImageBack">
-                        <Image.Style>
-                            <Style TargetType="Image">
-                                <Setter Property="Opacity" Value="1"/>
-                                <Style.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Opacity" Value="0.7"/>
-                                        <Setter Property="Cursor" Value="Hand"/>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Image.Style>
-                    </Image>
+            <ui:SymbolIcon x:Name="ImageBack"
+                           MouseDown="Image_MouseDown_Back"
+                           MouseEnter="Image_MouseHover_Back"
+                           MouseLeave="Image_MouseLeave_Back"
+                           Symbol="TriangleLeft12"
+                           Grid.Column="0"
+                           FontSize="50"
+                           Foreground="White"
+                           HorizontalAlignment="Right"/>
 
             <TextBlock Grid.Column="1"
                        x:Name="TextBlockDate"
@@ -55,25 +45,15 @@
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"/>
 
-            <Image Grid.Column="2"
-                   Source="arrow_right.png"
-                   Width="40"
-                   HorizontalAlignment="Left"
-                   VerticalAlignment="Center"
-                   MouseDown="Image_MouseDown_Forward"
-                   x:Name="ImageForward">
-                        <Image.Style>
-                            <Style TargetType="Image">
-                                <Setter Property="Opacity" Value="1"/>
-                                <Style.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Opacity" Value="0.7"/>
-                                        <Setter Property="Cursor" Value="Hand"/>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Image.Style>
-                    </Image>
+            <ui:SymbolIcon x:Name="ImageForward"
+                           MouseDown="Image_MouseDown_Forward"
+                           MouseEnter="Image_MouseHover_Forward"
+                           MouseLeave="Image_MouseLeave_Forward"
+                           Symbol="TriangleRight12"
+                           Grid.Column="2"
+                           FontSize="50"
+                           Foreground="White"
+                           HorizontalAlignment="Left"/>
         </Grid>
 
         <!--Content-->

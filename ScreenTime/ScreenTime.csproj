@@ -12,11 +12,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="arrow_left.png" />
-    <None Remove="arrow_right.png" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Include="image.ico" />
   </ItemGroup>
 
@@ -25,15 +20,6 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.Management" Version="8.0.0" />
     <PackageReference Include="WPF-UI" Version="3.0.4" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="arrow_left.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="arrow_right.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
   </ItemGroup>
 
 </Project>

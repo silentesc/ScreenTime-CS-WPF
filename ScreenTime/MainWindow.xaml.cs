@@ -35,13 +35,40 @@ namespace ScreenTime
             SetScreenTimeAppsForMainScreen();
         }
 
+        private void Image_MouseHover_Back(object sender, MouseEventArgs e)
+        {
+            Cursor = Cursors.Hand;
+            ImageBack.Foreground = new SolidColorBrush(Colors.Gray);
+        }
+
+        private void Image_MouseLeave_Back(object sender, MouseEventArgs e)
+        {
+            Cursor = Cursors.Arrow;
+            ImageBack.Foreground = new SolidColorBrush(Colors.White);
+        }
+
+
         private void Image_MouseDown_Forward(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             DateTime date = DateTime.ParseExact(dateString, dateFormat, CultureInfo.InvariantCulture);
             date = date.AddDays(1);
             dateString = date.ToString(dateFormat);
 
+            ImageForward.FontSize = 60;
+            
             SetScreenTimeAppsForMainScreen();
+        }
+
+        private void Image_MouseHover_Forward(object sender, MouseEventArgs e)
+        {
+            Cursor = Cursors.Hand;
+            ImageForward.Foreground = new SolidColorBrush(Colors.Gray);
+        }
+
+        private void Image_MouseLeave_Forward(object sender, MouseEventArgs e)
+        {
+            Cursor = Cursors.Arrow;
+            ImageForward.Foreground = new SolidColorBrush(Colors.White);
         }
 
         /*
