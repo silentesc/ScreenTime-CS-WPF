@@ -4,11 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ScreenTime"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         mc:Ignorable="d"
         Title="ScreenTime"
         Height="900"
         Width="1300"
-        Background="#36393e"
+        Background="#FF191B1D"
         WindowStartupLocation="CenterScreen">
 
 
@@ -26,12 +27,15 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
-            <Image Grid.Column="0"
-                   Source="arrow_left.png"
-                   Width="40"
-                   HorizontalAlignment="Right"
-                   VerticalAlignment="Center"
-                   MouseDown="Image_MouseDown_Back"/>
+            <ui:SymbolIcon x:Name="ImageBack"
+                           MouseDown="Image_MouseDown_Back"
+                           MouseEnter="Image_MouseHover_Back"
+                           MouseLeave="Image_MouseLeave_Back"
+                           Symbol="TriangleLeft12"
+                           Grid.Column="0"
+                           FontSize="50"
+                           Foreground="White"
+                           HorizontalAlignment="Right"/>
 
             <TextBlock Grid.Column="1"
                        x:Name="TextBlockDate"
@@ -41,12 +45,15 @@
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"/>
 
-            <Image Grid.Column="2"
-                   Source="arrow_right.png"
-                   Width="40"
-                   HorizontalAlignment="Left"
-                   VerticalAlignment="Center"
-                   MouseDown="Image_MouseDown_Forward"/>
+            <ui:SymbolIcon x:Name="ImageForward"
+                           MouseDown="Image_MouseDown_Forward"
+                           MouseEnter="Image_MouseHover_Forward"
+                           MouseLeave="Image_MouseLeave_Forward"
+                           Symbol="TriangleRight12"
+                           Grid.Column="2"
+                           FontSize="50"
+                           Foreground="White"
+                           HorizontalAlignment="Left"/>
         </Grid>
 
         <!--Content-->
