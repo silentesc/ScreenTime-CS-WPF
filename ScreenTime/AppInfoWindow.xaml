@@ -13,7 +13,7 @@
         Background="#FF191B1D"
         WindowStartupLocation="CenterScreen"
         ResizeMode="CanMinimize">
-    <Grid Grid.Row="1" x:Name="DynamicGrid">
+    <Grid Grid.Row="1">
         <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -33,12 +33,12 @@
                 </Grid.RowDefinitions>
 
                 <!-- Top Part -->
+                
                 <!-- App Name Title -->
 
                 <TextBlock Text="App Name"
-                           x:Name="AppName"
-                           Grid.Column="1" 
-                           Grid.ColumnSpan="2" 
+                           x:Name="AppNameTextBlock"
+                           Grid.ColumnSpan="4" 
                            Foreground="White" 
                            FontSize="30" 
                            HorizontalAlignment="Center"/>
@@ -80,7 +80,7 @@
                            Margin="15,15,0,0"/>
 
                 <TextBlock Text="1"
-                           x:Name="SecondsInFocus"
+                           x:Name="SecondsInFocusTextBlock"
                            Grid.Row="1"
                            Grid.Column="3"
                            Foreground="White" 
@@ -115,7 +115,7 @@
                            Grid.Row="1" Margin="15,0,0,15"/>
 
                 <TextBlock Text="1"
-                           x:Name="SecondsInBackground"
+                           x:Name="SecondsInBackgroundTextBlock"
                            Grid.Column="3" 
                            Grid.ColumnSpan="1"
                            Grid.Row="1"
@@ -164,7 +164,7 @@
                            Margin="15,15,0,0"/>
 
                 <TextBlock Text="1"
-                           x:Name="TimesOpened"
+                           x:Name="TimesOpenedTextBlock"
                            Grid.Row="3"
                            Grid.Column="3"
                            Foreground="White" 
@@ -200,7 +200,7 @@
                            Margin="15,0,0,15"/>
 
                 <TextBlock Text="1"
-                           x:Name="TimesFocused"
+                           x:Name="TimesFocusedTextBlock"
                            Grid.Column="3" 
                            Grid.ColumnSpan="1"
                            Grid.Row="3"
@@ -235,7 +235,7 @@
                         VerticalAlignment="Center"/>
 
                 <TextBlock Text="1"
-                           x:Name="Path"
+                           x:Name="PathTextBlock"
                            Grid.Column="0" 
                            Grid.ColumnSpan="4"
                            Grid.Row="5"
@@ -245,7 +245,7 @@
                            Panel.ZIndex="1" 
                            Margin="15,0,75,18"/>
 
-                <ui:SymbolIcon x:Name="ShowInFolder"
+                <ui:SymbolIcon x:Name="ShowInFolderBtn"
                                Symbol="Folder16"
                                Grid.Column="3" 
                                Grid.ColumnSpan="1"

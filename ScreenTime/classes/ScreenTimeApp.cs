@@ -14,7 +14,7 @@ namespace ScreenTime.classes
     internal class ScreenTimeApp
     {
         // Path, ScreenTimeApp
-        public static Dictionary<string, ScreenTimeApp> screenTimeApps = [];
+        public static readonly Dictionary<string, ScreenTimeApp> screenTimeApps = [];
 
         public string Name { get; private set; }
         public string Path { get; private set; }

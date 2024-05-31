@@ -1,74 +1,46 @@
-﻿using FontAwesome.WPF;
-using ScreenTime.classes;
-using System.Globalization;
-using System.Reflection;
+﻿using ScreenTime.classes;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
+using System.Windows.Media.Animation;
 using System.Windows.Shapes;
+using Wpf.Ui.Controls;
 
 namespace ScreenTime
 {
     public partial class MainWindow : Window
     {
+        // Default date format
         private readonly string dateFormat = "dd.MM.yyyy";
         private string dateString;
+        // Default sort mode
+        private SortMode currentSortMode = SortMode.SECONDS_IN_FOCUS;
 
         public MainWindow()
         {
             InitializeComponent();
+            // Initialize dateString with current date
             dateString = DateTime.Now.ToString(dateFormat);
+            // Set screen time apps for main screen
             SetScreenTimeAppsForMainScreen();
+            // Set default item in filter combo box
+            FilterComboBox.SelectedItem = FilterComboBox.Items[0];
         }
 
         /*
          * Events
          */
-        private void Image_MouseDown_Back(object sender, System.Windows.Input.MouseButtonEventArgs e)
+
+        private void FilterComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            DateTime date = DateTime.ParseExact(dateString, dateFormat, CultureInfo.InvariantCulture);
-            date = date.AddDays(-1);
-            dateString = date.ToString(dateFormat);
-
-            SetScreenTimeAppsForMainScreen();
-        }
-
-        private void Image_MouseHover_Back(object sender, MouseEventArgs e)
-        {
-            Cursor = Cursors.Hand;
-            ImageBack.Foreground = new SolidColorBrush(Colors.Gray);
-        }
-
-        private void Image_MouseLeave_Back(object sender, MouseEventArgs e)
-        {
-            Cursor = Cursors.Arrow;
-            ImageBack.Foreground = new SolidColorBrush(Colors.White);
-        }
-
-
-        private void Image_MouseDown_Forward(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            DateTime date = DateTime.ParseExact(dateString, dateFormat, CultureInfo.InvariantCulture);
-            date = date.AddDays(1);
-            dateString = date.ToString(dateFormat);
-
-            ImageForward.FontSize = 60;
-            
-            SetScreenTimeAppsForMainScreen();
-        }
-
-        private void Image_MouseHover_Forward(object sender, MouseEventArgs e)
-        {
-            Cursor = Cursors.Hand;
-            ImageForward.Foreground = new SolidColorBrush(Colors.Gray);
-        }
-
-        private void Image_MouseLeave_Forward(object sender, MouseEventArgs e)
-        {
-            Cursor = Cursors.Arrow;
-            ImageForward.Foreground = new SolidColorBrush(Colors.White);
+            // Update sort mode when filter combo box selection changes
+            if (FilterComboBox.SelectedItem is ComboBoxItem selectedItem)
+            {
+                Enum.TryParse(selectedItem.Tag.ToString(), out SortMode selectedSortMode);
+                currentSortMode = selectedSortMode;
+                SetScreenTimeAppsForMainScreen();
+            }
         }
 
         /*
@@ -76,40 +48,116 @@ namespace ScreenTime
          */
         private void SetScreenTimeAppsForMainScreen()
         {
+            // Clear existing screen time apps
             StackPanelDynamic.Children.Clear();
-
-            List<ScreenTimeApp> focusedAppsToday = ScreenTimeApp.GetScreenTimeAppsByDateSorted(dateString, SortMode.SECONDS_IN_FOCUS, true);
+            // Get screen time apps for the selected date and sort mode
+            List<ScreenTimeApp> focusedAppsToday = ScreenTimeApp.GetScreenTimeAppsByDateSorted(dateString, currentSortMode, true);
 
             if (focusedAppsToday.Count > 0)
             {
-                uint maxScreenTimeAppSeconds = focusedAppsToday.Max(app => app.SecondsInFocus.GetValueOrDefault(dateString));
+                uint maxProgressbarValue;
+                // Get the maximum screen time in seconds for scaling progress bars
+                switch (currentSortMode)
+                {
+                    case SortMode.SECONDS_IN_FOCUS:
+                        maxProgressbarValue = focusedAppsToday.Max(app => app.SecondsInFocus.GetValueOrDefault(dateString));
+                        break;
+                    case SortMode.SECONDS_IN_BACKGROUND:
+                        maxProgressbarValue = focusedAppsToday.Max(app => app.SecondsInBackground.GetValueOrDefault(dateString));
+                        break;
+                    case SortMode.TIMES_FOCUSED:
+                        maxProgressbarValue = focusedAppsToday.Max(app => app.TimesFocused.GetValueOrDefault(dateString));
+                        break;
+                    case SortMode.TIMES_OPENED:
+                        maxProgressbarValue = focusedAppsToday.Max(app => app.TimesOpened.GetValueOrDefault(dateString));
+                        break;
+                    default:
+                        maxProgressbarValue = focusedAppsToday.Max(app => app.SecondsInFocus.GetValueOrDefault(dateString));
+                        break;
+                }
 
                 foreach (ScreenTimeApp screenTimeApp in focusedAppsToday)
                 {
-                    AddScreenTimeAppToMainScreen(screenTimeApp, dateString, maxScreenTimeAppSeconds);
+                    // Add each screen time app to the main screen
+                    AddScreenTimeAppToMainScreen(screenTimeApp, dateString, maxProgressbarValue);
                 }
             }
 
+            // Update the displayed date
             TextBlockDate.Text = dateString;
         }
 
-        private void AddScreenTimeAppToMainScreen(ScreenTimeApp screenTimeApp, string todayDate, uint maxScreenTimeAppSeconds)
+        private void AddScreenTimeAppToMainScreen(ScreenTimeApp screenTimeApp, string todayDate, uint maxProgressbarValue)
         {
+            uint progressValue = 0;
             string screenTimeAppName = screenTimeApp.Name;
-            if (screenTimeAppName.Length > 35) screenTimeAppName = screenTimeAppName[..35] + "...";
+            // Truncate long app names
+            if (screenTimeAppName.Length > 50) screenTimeAppName = screenTimeAppName[..50] + "...";
+            uint screenTimeAppSeconds = 0;
+            uint screenTimeAppOpenings = 0;
+            uint indicator;
 
-            uint screenTimeAppSecondsInFocus = screenTimeApp.SecondsInFocus.GetValueOrDefault(todayDate);
+            switch (currentSortMode)
+            {
+                case SortMode.SECONDS_IN_FOCUS:
+                    progressValue = screenTimeApp.SecondsInFocus.GetValueOrDefault(todayDate);
+                    screenTimeAppSeconds = screenTimeApp.SecondsInFocus.GetValueOrDefault(todayDate);
+                    indicator = 1;
+                    break;
+                case SortMode.SECONDS_IN_BACKGROUND:
+                    progressValue = screenTimeApp.SecondsInBackground.GetValueOrDefault(todayDate);
+                    screenTimeAppSeconds = screenTimeApp.SecondsInBackground.GetValueOrDefault(todayDate);
+                    indicator = 1;
+                    break;
+                case SortMode.TIMES_FOCUSED:
+                    progressValue = screenTimeApp.TimesFocused.GetValueOrDefault(todayDate);
+                    screenTimeAppOpenings = screenTimeApp.TimesFocused.GetValueOrDefault(todayDate);
+                    indicator = 0;
+                    break;
+                case SortMode.TIMES_OPENED:
+                    progressValue = screenTimeApp.TimesOpened.GetValueOrDefault(todayDate);
+                    screenTimeAppOpenings = screenTimeApp.TimesOpened.GetValueOrDefault(todayDate);
+                    indicator = 0;
+                    break;
+                default:
+                    return;
+            }
 
-            uint secondsInFocus = screenTimeAppSecondsInFocus % 60;
-            uint minutesInFocus = screenTimeAppSecondsInFocus / 60;
-            uint hoursInFocus = minutesInFocus / 60;
-            string screenTimeAppTimeInFocus;
-            if (hoursInFocus > 0)
-                screenTimeAppTimeInFocus = string.Format("{0}h {1}m", hoursInFocus, minutesInFocus % 60);
-            else if (minutesInFocus > 0)
-                screenTimeAppTimeInFocus = string.Format("{0}m {1}s", minutesInFocus, secondsInFocus);
+            string appTime;
+            string appOpenings;
+            System.Windows.Controls.TextBlock textBlockScreenTimeAppSeconds;
+
+            if (indicator == 1)
+            {
+                uint seconds = screenTimeAppSeconds % 60;
+                uint minutes = screenTimeAppSeconds / 60;
+                uint hours = minutes / 60;
+
+                if (hours > 0)
+                    appTime = string.Format("{0}h {1}m", hours, minutes % 60);
+                else if (minutes > 0)
+                    appTime = string.Format("{0}m {1}s", minutes, seconds);
+                else
+                    appTime = string.Format("{0}s", screenTimeAppSeconds);
+
+                textBlockScreenTimeAppSeconds = new System.Windows.Controls.TextBlock()
+                {
+                    Text = appTime,
+                    Foreground = Brushes.White,
+                    FontSize = 26
+                };
+            }
             else
-                screenTimeAppTimeInFocus = string.Format("{0}s", screenTimeAppSecondsInFocus);
+            {
+                appOpenings = string.Format("{0}", screenTimeAppOpenings);
+
+                textBlockScreenTimeAppSeconds = new System.Windows.Controls.TextBlock()
+                {
+                    Text = appOpenings,
+                    Foreground = Brushes.White,
+                    FontSize = 26
+                };
+            }
 
             Grid grid = new();
             grid.RowDefinitions.Add(new RowDefinition());
@@ -120,39 +168,49 @@ namespace ScreenTime
             grid.ColumnDefinitions.Add(new ColumnDefinition());
             grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
 
-            // Create the new TextBlocks
-            TextBlock textBlockScreenTimeAppName = new()
+            // Create the new TextBlocks for app name and time
+            System.Windows.Controls.TextBlock textBlockScreenTimeAppName = new()
             {
                 Text = screenTimeAppName,
                 Foreground = Brushes.White,
                 FontSize = 30
             };
 
-            TextBlock textBlockScreenTimeAppSecondsInFocus = new()
-            {
-                Text = screenTimeAppTimeInFocus,
-                Foreground = Brushes.White,
-                FontSize = 26
-            };
+            double maxWidth = 750;
 
-            // Create the new Rectangle
+            double progressPercentage = (double)progressValue / maxProgressbarValue;
+            // Calculate progress width based on the maximum width
+            double progressWidth = progressPercentage * maxWidth;
+
+            // Scale width
+            if (progressWidth > maxWidth)
+            {
+                progressWidth = maxWidth;
+            }
+
+            // Create the progress rectangle
             Rectangle progressRect = new()
             {
                 Style = (Style)FindResource("CustomProgressBarStyle"),
-                Width = CalculateProgressWidth(screenTimeAppSecondsInFocus, maxScreenTimeAppSeconds)
+                Width = progressWidth
             };
 
-
-            // Create the new arrow icon
-            FontAwesome.WPF.FontAwesome arrowIcon = new FontAwesome.WPF.FontAwesome
+            // Create the arrow icon
+            var arrowIcon = new SymbolIcon
             {
-                Icon = FontAwesomeIcon.AngleRight,
+                Symbol = SymbolRegular.TriangleRight12,
                 Foreground = Brushes.White,
-                FontSize = 50,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center
             };
 
+            // Create border for the entire item
+            Border border = new()
+            {
+                Width = 900,
+                Style = (Style)FindResource("CustomBorderStyle"),
+                Child = grid
+            };
 
             // Define the hover colors
             Brush originalColor = Brushes.White;
@@ -162,33 +220,36 @@ namespace ScreenTime
             arrowIcon.Foreground = originalColor;
 
             // MouseEnter event handler for hover effect
-            arrowIcon.MouseEnter += (sender, e) =>
+            border.MouseEnter += (sender, e) =>
             {
                 Cursor = Cursors.Hand;
                 arrowIcon.Foreground = hoverColor;
             };
 
             // Assign a click event handler
-            arrowIcon.MouseDown += (sender, e) =>
+            border.MouseDown += (sender, e) =>
             {
                 AppInfoWindow appInfoWindow = new(screenTimeApp, todayDate);
                 appInfoWindow.Show();
             };
 
-
             // MouseLeave event handler to revert to original color
-            arrowIcon.MouseLeave += (sender, e) =>
+            border.MouseLeave += (sender, e) =>
             {
                 Cursor = Cursors.Arrow;
                 arrowIcon.Foreground = originalColor;
             };
 
-            // Create border for the entire item
-            Border border = new()
+            ToggleSidebarButton.MouseEnter += (sender, e) =>
             {
-                Width = 700,
-                Style = (Style)FindResource("CustomBorderStyle"),
-                Child = grid
+                Cursor = Cursors.Hand;
+                ToggleSidebarButton.Foreground = Brushes.DarkGray;
+            };
+
+            ToggleSidebarButton.MouseLeave += (sender, e) =>
+            {
+                Cursor = Cursors.Arrow;
+                ToggleSidebarButton.Foreground = Brushes.White;
             };
 
             // Add elements to the grid
@@ -196,8 +257,8 @@ namespace ScreenTime
             Grid.SetColumn(textBlockScreenTimeAppName, 0);
             Grid.SetColumnSpan(textBlockScreenTimeAppName, 3);
 
-            Grid.SetColumn(textBlockScreenTimeAppSecondsInFocus, 1);
-            Grid.SetRow(textBlockScreenTimeAppSecondsInFocus, 1);
+            Grid.SetColumn(textBlockScreenTimeAppSeconds, 1);
+            Grid.SetRow(textBlockScreenTimeAppSeconds, 1);
 
             Grid.SetRow(progressRect, 1);
             Grid.SetColumnSpan(progressRect, 1);
@@ -209,18 +270,55 @@ namespace ScreenTime
 
             grid.Children.Add(progressRect);
             grid.Children.Add(textBlockScreenTimeAppName);
-            grid.Children.Add(textBlockScreenTimeAppSecondsInFocus);
+            grid.Children.Add(textBlockScreenTimeAppSeconds);
             grid.Children.Add(arrowIcon);
 
             // Add border to the dynamicStackPanel
             StackPanelDynamic.Children.Add(border);
         }
 
-        private double CalculateProgressWidth(uint currentProgress, uint maxProgress)
+        private void Calendar_SelectedDatesChanged(object sender, SelectionChangedEventArgs e)
         {
-            double progressPercentage = (double)currentProgress / maxProgress;
-            double maxWidth = 550;
-            return progressPercentage * maxWidth;
+            if (sender is Calendar calendar && calendar.SelectedDate.HasValue)
+            {
+                dateString = calendar.SelectedDate.Value.ToString(dateFormat);
+                SetScreenTimeAppsForMainScreen();
+
+            }
+        }
+
+        private bool isSidebarExpanded = true; // Variable to track the expanded state of the sidebar
+
+        private void ToggleSidebarButton_Click(object sender, MouseButtonEventArgs e)
+        {
+            var sidebarIn = (Storyboard)FindResource("SidebarAnimationIn");
+            var sidebarOut = (Storyboard)FindResource("SidebarAnimationOut");
+
+            if (isSidebarExpanded)
+            {
+                sidebarOut.Begin();
+                ToggleSidebarButton.Symbol = SymbolRegular.TriangleLeft12;
+                SettingsBtn.Opacity = 0;
+                FilterComboBox.Opacity = 0;
+                DateSelector.Opacity = 0;
+            }
+            else
+            {
+                sidebarIn.Begin();
+                ToggleSidebarButton.Symbol = SymbolRegular.TriangleRight12;
+                SettingsBtn.Opacity = 1;
+                FilterComboBox.Opacity = 1;
+                DateSelector.Opacity = 1;
+            }
+
+            isSidebarExpanded = !isSidebarExpanded;
+        }
+
+        private void SettingsBtn_Click(object sender, MouseButtonEventArgs e)
+        {
+            SettingsWindow settingsWindow = new();
+            settingsWindow.Show();
         }
     }
 }
+
