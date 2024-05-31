@@ -12,57 +12,103 @@
         Background="#FF191B1D"
         WindowStartupLocation="CenterScreen">
 
+    <Window.Resources>
+        <Storyboard x:Key="SidebarAnimationOut">
+            <DoubleAnimation Storyboard.TargetName="SideBarGrid" 
+                             Storyboard.TargetProperty="Width"
+                             From="300" To="60" Duration="0:0:0.3"/>
+        </Storyboard>
+        <Storyboard x:Key="SidebarAnimationIn">
+            <DoubleAnimation Storyboard.TargetName="SideBarGrid" 
+                             Storyboard.TargetProperty="Width"
+                             From="60" To="300" Duration="0:0:0.3"/>
+        </Storyboard>
+    </Window.Resources>
 
-    <Grid>
+    <Grid x:Name="MainGrid">
         <Grid.RowDefinitions>
-            <RowDefinition Height="150"/>
+            <RowDefinition Height="120"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <!--Date navigation-->
-        <Grid Grid.Row="0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
 
-            <ui:SymbolIcon x:Name="ImageBack"
-                           MouseDown="Image_MouseDown_Back"
-                           MouseEnter="Image_MouseHover_Back"
-                           MouseLeave="Image_MouseLeave_Back"
-                           Symbol="TriangleLeft12"
-                           Grid.Column="0"
-                           FontSize="50"
-                           Foreground="White"
-                           HorizontalAlignment="Right"/>
-
-            <TextBlock Grid.Column="1"
-                       x:Name="TextBlockDate"
-                       Text="01.01.2001"
-                       Foreground="White"
-                       FontSize="40"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center"/>
-
-            <ui:SymbolIcon x:Name="ImageForward"
-                           MouseDown="Image_MouseDown_Forward"
-                           MouseEnter="Image_MouseHover_Forward"
-                           MouseLeave="Image_MouseLeave_Forward"
-                           Symbol="TriangleRight12"
-                           Grid.Column="2"
-                           FontSize="50"
-                           Foreground="White"
-                           HorizontalAlignment="Left"/>
-        </Grid>
+        <TextBlock Grid.Column="1"
+                   x:Name="TextBlockDate"
+                   Text="01.01.2001"
+                   Foreground="White"
+                   FontSize="50"
+                   VerticalAlignment="Center" HorizontalAlignment="Center" Width="237"/>
 
         <!--Content-->
-        <Grid Grid.Row="1">
-            <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
 
-                <StackPanel x:Name="StackPanelDynamic"
-                            HorizontalAlignment="Center"/>
-            </ScrollViewer>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False" Grid.Row="1" Grid.Column="1">
+            <StackPanel x:Name="StackPanelDynamic"/>
+        </ScrollViewer>
+
+        <Grid Grid.RowSpan="2">
+            <Grid x:Name="SideBarGrid" Width="300" ClipToBounds="True">
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="120"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <Calendar Grid.Row="1"
+                          x:Name="DateSelector"
+                          Height="300"
+                          Width="250"
+                          VerticalAlignment="Top"
+                          BorderBrush="#FF44484E"
+                          Background="#2E2E2E"
+                          SelectedDatesChanged="Calendar_SelectedDatesChanged" 
+                          Margin="25,10,25,0"
+                          Focusable="False">
+                </Calendar>
+
+                <Border Grid.RowSpan="2"
+                        BorderBrush="#FF44484E"
+                        BorderThickness="1" 
+                        Background="#FF1E2023"
+                        Panel.ZIndex="-1"
+                        CornerRadius="0,20,20,0"/>
+
+                <ui:SymbolIcon Symbol="Settings32"
+                               x:Name="SettingsBtn"
+                               MouseDown="SettingsBtn_Click"
+                               Grid.Row="1"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Bottom"
+                               FontSize="50"
+                               Foreground="White"
+                               Margin="15,0,0,15"/>
+
+                <ComboBox x:Name="FilterComboBox" 
+                          Width="250"
+                          SelectionChanged="FilterComboBox_SelectionChanged"
+                          Background="#2E2E2E"
+                          BorderBrush="#FF242629"
+                          Margin="25,0,25,0"
+                          VerticalAlignment="Bottom">
+
+                    <ComboBoxItem Content="Seconds in Focus" Tag="SECONDS_IN_FOCUS"/>
+                    <ComboBoxItem Content="Seconds in Background" Tag="SECONDS_IN_BACKGROUND"/>
+                    <ComboBoxItem Content="Times Focused" Tag="TIMES_FOCUSED"/>
+                    <ComboBoxItem Content="Times Opened" Tag="TIMES_OPENED"/>
+                </ComboBox>
+            </Grid>
+            <ui:SymbolIcon x:Name="ToggleSidebarButton" 
+                           FontSize="40"
+                           Symbol="TriangleLeft12"
+                           HorizontalAlignment="Right" 
+                           VerticalAlignment="Top" 
+                           Margin="0,20,15,0"
+                           Foreground="White"
+                           MouseDown="ToggleSidebarButton_Click">
+            </ui:SymbolIcon>
         </Grid>
     </Grid>
 </Window>
