@@ -13,7 +13,7 @@
         Background="#FF191B1D"
         WindowStartupLocation="CenterScreen"
         ResizeMode="CanMinimize">
-    <Grid Grid.Row="1" x:Name="DynamicGrid">
+    <Grid Grid.Row="1">
         <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -38,8 +38,7 @@
 
                 <TextBlock Text="App Name"
                            x:Name="AppNameTextBlock"
-                           Grid.Column="1"
-                           Grid.ColumnSpan="2" 
+                           Grid.ColumnSpan="4" 
                            Foreground="White" 
                            FontSize="30" 
                            HorizontalAlignment="Center"/>

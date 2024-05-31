@@ -23,5 +23,10 @@ namespace ScreenTime
         {
             InitializeComponent();
         }
+
+        private void EraseDataBtn_Click(object sender, MouseButtonEventArgs e)
+        {
+
+        }
     }
 }

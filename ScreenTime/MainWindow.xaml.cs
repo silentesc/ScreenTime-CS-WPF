@@ -92,7 +92,7 @@ namespace ScreenTime
             uint progressValue = 0;
             string screenTimeAppName = screenTimeApp.Name;
             // Truncate long app names
-            if (screenTimeAppName.Length > 35) screenTimeAppName = screenTimeAppName[..35] + "...";
+            if (screenTimeAppName.Length > 50) screenTimeAppName = screenTimeAppName[..50] + "...";
             uint screenTimeAppSeconds = 0;
             uint screenTimeAppOpenings = 0;
             uint indicator;

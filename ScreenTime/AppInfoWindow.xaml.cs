@@ -17,7 +17,13 @@ namespace ScreenTime
         {
 
             string appName = screenTimeApp.Name;
+
+            // Truncate long app names
+            if(appName.Length > 15) appName = appName[..15] + "...";
+
             string appPath = screenTimeApp.Path;
+            // Truncate long path names
+            if (appPath.Length > 30) appPath = appPath[..30] + "...";
 
             // Get and format time in background
             uint backgroundSeconds = screenTimeApp.SecondsInBackground.GetValueOrDefault(date);
