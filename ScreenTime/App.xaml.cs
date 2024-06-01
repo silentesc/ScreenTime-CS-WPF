@@ -19,9 +19,9 @@ namespace ScreenTime
             base.OnStartup(e);
 
             StorageUtils.LoadAppsFromFile();
+            ScreenTimeApp.MergePossibleNameConflicts();
 
             // Start process listeners
-
             ProcessStartListener startListener = new();
             startListener.Start();
             processWatcherBases.Add(startListener);
@@ -31,7 +31,6 @@ namespace ScreenTime
             //processWatcherBases.Add(exitListener);
 
             // Start periodically listeners
-
             FocusChangeListener focusChangeListener = new();
             focusChangeListener.Start();
         }

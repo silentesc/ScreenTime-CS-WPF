@@ -20,16 +20,12 @@ namespace ScreenTime.utils
             File.WriteAllText(filePath, json);
         }
 
-        public static List<ScreenTimeApp> LoadAppsFromFile()
+        public static void LoadAppsFromFile()
         {
-            if (!File.Exists(filePath)) return [];
+            if (!File.Exists(filePath)) return;
 
             string json = File.ReadAllText(filePath);
-            List<ScreenTimeApp>? apps = JsonConvert.DeserializeObject<List<ScreenTimeApp>>(json);
-
-            if (apps == null) return [];
-
-            return apps;
+            JsonConvert.DeserializeObject<List<ScreenTimeApp>>(json);
         }
     }
 }

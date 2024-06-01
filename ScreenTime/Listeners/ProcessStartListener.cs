@@ -21,7 +21,8 @@ namespace ScreenTime.Listeners
             {
                 process = Process.GetProcessById(processId);
                 processModule = process.MainModule;
-            } catch { }
+            }
+            catch { }
 
             if (process == null || processModule == null) return;
 

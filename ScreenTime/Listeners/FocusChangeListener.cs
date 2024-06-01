@@ -12,13 +12,23 @@ namespace ScreenTime.Listeners
         [DllImport("user32.dll")]
         private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint pdwProcessId);
 
+        /*
+         * Config constants
+         */
+        // The delay how long the app should sleep until it checks if a focus has changed and increase the focus seconds
+        // Lower the value for more accurate results, but it will cost more performance
         private readonly int sleepDelaySeconds = 1;
+        // When the background second should be increased
+        // 1 means the background settings are increased every check, 2 means every second check etc.
+        // Lower the value for more accurate results, but it will cost more performance
+        private readonly int increaseBackgroundSecondsCounter = 2;
 
         public void Start()
         {
             Thread listener = new(() =>
             {
                 int lastProcessId = -1;
+                int counter = 1;
 
                 while (true)
                 {
@@ -38,26 +48,19 @@ namespace ScreenTime.Listeners
                         lastProcessId = (int)processId;
                     }
 
-                    // Increase background seconds
-                    foreach (Process process in Process.GetProcesses())
+                    // Increase background seconds every x checks
+                    if (counter >= increaseBackgroundSecondsCounter)
                     {
-                        if (process.Id == processId) continue;
-                        if (string.IsNullOrEmpty(process.MainWindowTitle) || process.MainWindowHandle == IntPtr.Zero) continue;
-
-                        ProcessModule? processModule = null;
-
-                        try
+                        foreach (ScreenTimeApp screenTimeApp in ScreenTimeApp.screenTimeApps.Values)
                         {
-                            processModule = process.MainModule;
+                            if (!screenTimeApp.IsAppRunning()) continue;
+                            screenTimeApp.IncreaseSecondsInBackground((uint)(sleepDelaySeconds * increaseBackgroundSecondsCounter));
                         }
-                        catch { }
-
-                        if (processModule == null) continue;
-
-                        if (ScreenTimeApp.screenTimeApps.TryGetValue(processModule.FileName, out ScreenTimeApp? screenTimeApp))
-                        {
-                            screenTimeApp.IncreaseSecondsInBackground((uint)sleepDelaySeconds);
-                        }
+                        counter = 1;
+                    }
+                    else
+                    {
+                        counter++;
                     }
                 }
             })
@@ -72,13 +75,12 @@ namespace ScreenTime.Listeners
         private void OnFocusKeep(int processId, int keptFocusSeconds)
         {
             Process foregroundProcess = Process.GetProcessById(processId);
-            ProcessModule? processModule = null;
-
+            ProcessModule? processModule;
             try
             {
                 processModule = foregroundProcess.MainModule;
             }
-            catch { }
+            catch { return; }
 
             if (processModule == null) return;
 
@@ -90,13 +92,12 @@ namespace ScreenTime.Listeners
         private void OnFocusChange(int lastProcessId, int processId)
         {
             Process foregroundProcess = Process.GetProcessById(processId);
-            ProcessModule? processModule = null;
-
+            ProcessModule? processModule;
             try
             {
                 processModule = foregroundProcess.MainModule;
             }
-            catch { }
+            catch { return; }
 
             if (processModule == null) return;
 
