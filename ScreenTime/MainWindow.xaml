@@ -166,9 +166,10 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="120"/>
                     <RowDefinition/>
+                    <RowDefinition/>
                 </Grid.RowDefinitions>
 
-                <Border Grid.RowSpan="2"
+                <Border Grid.RowSpan="3"
                         BorderBrush="#FF44484E"
                         BorderThickness="1"  
                         Background="#FF1E2023"
@@ -177,34 +178,32 @@
                 <Calendar SelectedDatesChanged="Calendar_SelectedDatesChanged" 
                           x:Name="DateSelector"
                           HorizontalAlignment="Center" 
-                          Height="345" 
-                          VerticalAlignment="Top" 
+                          Height="345"
                           Width="350"  
                           CalendarDayButtonStyle="{DynamicResource CalendarDayButtonStyle1}"
-                          Margin="10,118,10,425" 
-                          Grid.RowSpan="2"/>
+                          Grid.Row="1" 
+                          Margin="10,0,10,0"/>
 
                 <ui:Button x:Name="TodayBtn"
                            Content="Today"
                            MouseEnter="TodayBtn_Hover"
                            MouseLeave="TodayBtn_Leave"
                            Click="TodayBtn_Click"
-                           Grid.Row="1"
+                           Grid.Row="2"
                            Background="#2E2E2E"
                            BorderBrush="#FF242629"
                            Foreground="White"
                            HorizontalAlignment="Center" 
                            MinHeight="32" 
                            MinWidth="330"
-                           VerticalAlignment="Top" 
-                           Margin="0,325,0,0"/>
+                           VerticalAlignment="Top"/>
 
                 <ui:SymbolIcon Symbol="Settings32"
                                x:Name="SettingsBtn"
                                MouseEnter="SettingsBtn_Hover"
                                MouseLeave="SettingsBtn_Leave"
                                MouseDown="SettingsBtn_Click"
-                               Grid.Row="1"
+                               Grid.Row="2"
                                HorizontalAlignment="Left"
                                VerticalAlignment="Bottom"
                                FontSize="50"
@@ -223,6 +222,7 @@
                     <ComboBoxItem Content="Times Focused" Tag="TIMES_FOCUSED"/>
                     <ComboBoxItem Content="Times Opened" Tag="TIMES_OPENED"/>
                 </ComboBox>
+                
             </Grid>
         </Grid>
     </Grid>
