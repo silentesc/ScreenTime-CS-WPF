@@ -171,7 +171,7 @@
 
                 <Border Grid.RowSpan="3"
                         BorderBrush="#FF44484E"
-                        BorderThickness="1"  
+                        BorderThickness="0.75"  
                         Background="#FF1E2023"
                         Panel.ZIndex="-1"/>
 
