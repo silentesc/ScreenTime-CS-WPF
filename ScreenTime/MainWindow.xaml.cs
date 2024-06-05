@@ -229,7 +229,7 @@ namespace ScreenTime
             border.MouseDown += (sender, e) =>
             {
                 AppInfoWindow appInfoWindow = new(screenTimeApp, todayDate);
-                appInfoWindow.Show();
+                appInfoWindow.ShowDialog();
             };
 
             // MouseLeave event handler to revert to original color
@@ -276,7 +276,7 @@ namespace ScreenTime
         private void SettingsBtn_Click(object sender, MouseButtonEventArgs e)
         {
             SettingsWindow settingsWindow = new();
-            settingsWindow.Show();
+            settingsWindow.ShowDialog();
         }
 
         private void SettingsBtn_Hover(object sender, MouseEventArgs e)
