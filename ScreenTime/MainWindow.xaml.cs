@@ -3,7 +3,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using Wpf.Ui.Controls;
 
@@ -230,7 +229,7 @@ namespace ScreenTime
             border.MouseDown += (sender, e) =>
             {
                 AppInfoWindow appInfoWindow = new(screenTimeApp, todayDate);
-                appInfoWindow.Show();
+                appInfoWindow.ShowDialog();
             };
 
             // MouseLeave event handler to revert to original color
@@ -238,18 +237,6 @@ namespace ScreenTime
             {
                 Cursor = Cursors.Arrow;
                 arrowIcon.Foreground = originalColor;
-            };
-
-            ToggleSidebarButton.MouseEnter += (sender, e) =>
-            {
-                Cursor = Cursors.Hand;
-                ToggleSidebarButton.Foreground = Brushes.DarkGray;
-            };
-
-            ToggleSidebarButton.MouseLeave += (sender, e) =>
-            {
-                Cursor = Cursors.Arrow;
-                ToggleSidebarButton.Foreground = Brushes.White;
             };
 
             // Add elements to the grid
@@ -283,42 +270,44 @@ namespace ScreenTime
             {
                 dateString = calendar.SelectedDate.Value.ToString(dateFormat);
                 SetScreenTimeAppsForMainScreen();
-
             }
-        }
-
-        private bool isSidebarExpanded = true; // Variable to track the expanded state of the sidebar
-
-        private void ToggleSidebarButton_Click(object sender, MouseButtonEventArgs e)
-        {
-            var sidebarIn = (Storyboard)FindResource("SidebarAnimationIn");
-            var sidebarOut = (Storyboard)FindResource("SidebarAnimationOut");
-
-            if (isSidebarExpanded)
-            {
-                sidebarOut.Begin();
-                ToggleSidebarButton.Symbol = SymbolRegular.TriangleLeft12;
-                SettingsBtn.Opacity = 0;
-                FilterComboBox.Opacity = 0;
-                DateSelector.Opacity = 0;
-            }
-            else
-            {
-                sidebarIn.Begin();
-                ToggleSidebarButton.Symbol = SymbolRegular.TriangleRight12;
-                SettingsBtn.Opacity = 1;
-                FilterComboBox.Opacity = 1;
-                DateSelector.Opacity = 1;
-            }
-
-            isSidebarExpanded = !isSidebarExpanded;
         }
 
         private void SettingsBtn_Click(object sender, MouseButtonEventArgs e)
         {
             SettingsWindow settingsWindow = new();
-            settingsWindow.Show();
+            settingsWindow.ShowDialog();
+        }
+
+        private void SettingsBtn_Hover(object sender, MouseEventArgs e)
+        {
+            Cursor = Cursors.Hand;
+            SettingsBtn.Foreground = Brushes.DarkGray;
+        }
+
+        private void SettingsBtn_Leave(object sender, MouseEventArgs e)
+        {
+            Cursor = Cursors.Arrow;
+            SettingsBtn.Foreground = Brushes.White;
+        }
+
+        private void TodayBtn_Click(object sender, RoutedEventArgs e)
+        {
+            // Set dateString to today's date
+            dateString = DateTime.Now.ToString(dateFormat);
+            // Refresh the screen time apps for the main screen
+            SetScreenTimeAppsForMainScreen();
+
+        }
+
+        private void TodayBtn_Hover(object sender, MouseEventArgs e)
+        {
+            Cursor = Cursors.Hand;
+        }
+
+        private void TodayBtn_Leave(object sender, MouseEventArgs e)
+        {
+            Cursor = Cursors.Arrow;
         }
     }
 }
-
