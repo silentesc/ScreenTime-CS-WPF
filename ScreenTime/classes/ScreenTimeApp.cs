@@ -34,15 +34,17 @@ namespace ScreenTime.classes
 
         public static ScreenTimeApp CreateOrGetScreenTimeApp(string name, string path)
         {
-            // TODO Check for conflict in name and merge
-
-            if (screenTimeApps.TryGetValue(path, out ScreenTimeApp? screenTimeApp) && screenTimeApp != null)
+            if ((screenTimeApps.TryGetValue(name, out ScreenTimeApp? screenTimeApp) || screenTimeApps.TryGetValue(path, out screenTimeApp)) &&
+                screenTimeApp != null)
             {
                 return screenTimeApp;
             }
             return new ScreenTimeApp(name, path, [], [], [], []);
         }
 
+        /*
+         * Takes the newer apps path and merges the rest if there are duplicates
+         */
         public static void MergePossibleNameConflicts()
         {
             /*
@@ -53,89 +55,56 @@ namespace ScreenTime.classes
              *   else
              *     add it to the list
              */
-
-
-            // FIXME bugged
             List<ScreenTimeApp> mergedApps = [];
-            bool conflictFound = true;
 
-            while (conflictFound)
+            foreach (ScreenTimeApp screenTimeApp in screenTimeApps.Values)
             {
-                for (int i = 0; i < screenTimeApps.Count; i++)
+                /*
+                 * Trys to get the first ScreenTimeApp that has been already added to the mergedApps list
+                 * If none already exist, it adds it to the mergedApps list
+                 * That means the next one is a duplicate and the logic will be applied
+                 */
+                ScreenTimeApp? mergedApp = mergedApps.Where(item => item.Name == screenTimeApp.Name).ToList().FirstOrDefault();
+
+                if (mergedApp == null)
                 {
-                    // Get all apps with same name
-                    string appName = screenTimeApps.Values.ToList()[i].Name;
-                    List<ScreenTimeApp> appsForName = GetScreenTimeAppsByName(appName);
-                    
-                    // Remove apps with name
-                    appsForName.ForEach(app => screenTimeApps.Remove(app.Path));
+                    mergedApps.Add(screenTimeApp);
+                    continue;
+                }
 
-                    // Check if conflict found
-                    if (appsForName.Count == 0)
-                    {
-                        Debug.WriteLine("0 APPS ????????????");
-                        conflictFound = false;
-                        continue;
-                    }
-                    if (appsForName.Count == 1)
-                    {
-                        mergedApps.Add(appsForName[0]);
-                        conflictFound = false;
-                        continue;
-                    }
+                mergedApp.Path = screenTimeApp.Path;
 
-                    // Copy values
-                    string path = appsForName.Last().Path;
-                    Dictionary<string, uint> secondsInFocus = [];
-                    Dictionary<string, uint> secondsInBackground = [];
-                    Dictionary<string, uint> timesFocused = [];
-                    Dictionary<string, uint> timesOpened = [];
+                /*
+                 * Instead of looping through all attributes in seperate loops we just put that in a dictionary
+                 * where the key is the mergedApp (already existing app) variable and the value is the screenTimeApp (thats the newer version) variable
+                 * New variables just have to be added to the dictionary and will be included
+                 */
+                Dictionary<Dictionary<string, uint>, Dictionary<string, uint>> variables = new()
+                {
+                    {mergedApp.SecondsInFocus, screenTimeApp.SecondsInFocus },
+                    {mergedApp.SecondsInBackground, screenTimeApp.SecondsInBackground },
+                    {mergedApp.TimesFocused, screenTimeApp.TimesFocused },
+                    {mergedApp.TimesOpened, screenTimeApp.TimesOpened }
+                };
 
-                    foreach (ScreenTimeApp app in appsForName)
+                foreach (KeyValuePair<Dictionary<string, uint>, Dictionary<string, uint>> variable in variables)
+                {
+                    foreach (KeyValuePair<string, uint> keyValuePair in variable.Value)
                     {
-                        Dictionary<Dictionary<string, uint>, Dictionary<string, uint>> variables = new()
+                        if (variable.Key.ContainsKey(keyValuePair.Key))
                         {
-                            { secondsInFocus, app.SecondsInFocus },
-                            { secondsInBackground, app.SecondsInBackground },
-                            { timesFocused, app.TimesFocused },
-                            { timesOpened, app.TimesOpened }
-                        };
-
-                        // This uses the "variables" variable to not do the same thing 4 times
-                        // It adds the seconds/count to the date if there is one or creates the date with the seconds if not
-                        foreach (KeyValuePair<Dictionary<string, uint>, Dictionary<string, uint>> variable in variables)
+                            variable.Key[keyValuePair.Key] += keyValuePair.Value;
+                        }
+                        else
                         {
-                            foreach (KeyValuePair<string, uint> keyValuePair in variable.Value)
-                            {
-                                if (variable.Key.TryGetValue(keyValuePair.Key, out uint output))
-                                {
-                                    variable.Key[keyValuePair.Key] += output;
-                                }
-                                else
-                                {
-                                    variable.Key[keyValuePair.Key] = output;
-                                }
-                            }
+                            variable.Key[keyValuePair.Key] = keyValuePair.Value;
                         }
                     }
-
-                    //Make new app and add to list
-                    ScreenTimeApp mergedApp = new(appName, path, secondsInFocus, secondsInBackground, timesFocused, timesOpened);
-                    mergedApps.Add(mergedApp);
-
-                    // Break to start checking for conflicts from the beginning again
-                    break;
                 }
             }
 
-            mergedApps.ForEach(app =>
-            {
-                Debug.WriteLine($"{app.Name} | {app.Path}");
-            });
-
-            // Save apps
+            // Save apps in list
             screenTimeApps.Clear();
-
             foreach (ScreenTimeApp mergedApp in mergedApps)
             {
                 screenTimeApps.Add(mergedApp.Path, mergedApp);
