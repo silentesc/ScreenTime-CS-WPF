@@ -8,6 +8,7 @@ namespace ScreenTime
     public partial class App : Application
     {
         private readonly List<ProcessWatcherBase> processWatcherBases = [];
+        private Mutex? mutex;
 
         public App()
         {
@@ -17,6 +18,17 @@ namespace ScreenTime
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+
+            // Prevent app from being opened twice
+            const string appMutedName = "ScreenTime-1718450821";
+            mutex = new Mutex(true, appMutedName, out bool createdNewAppMutex);
+
+            if (!createdNewAppMutex)
+            {
+                MessageBox.Show("App already running");
+                Current.Shutdown();
+                return;
+            }
 
             StorageUtils.LoadAppsFromFile();
             ScreenTimeApp.MergePossibleNameConflicts();
@@ -45,6 +57,9 @@ namespace ScreenTime
             }
 
             StorageUtils.SaveAppsToFile(ScreenTimeApp.screenTimeApps.Values.ToList());
+
+            mutex?.ReleaseMutex();
+            mutex?.Dispose();
         }
 
         void OnDispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
@@ -55,6 +70,9 @@ namespace ScreenTime
             }
 
             StorageUtils.SaveAppsToFile(ScreenTimeApp.screenTimeApps.Values.ToList());
+
+            mutex?.ReleaseMutex();
+            mutex?.Dispose();
 
             e.Handled = true;
         }
