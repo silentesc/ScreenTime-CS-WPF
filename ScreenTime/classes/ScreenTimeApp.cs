@@ -34,11 +34,19 @@ namespace ScreenTime.classes
 
         public static ScreenTimeApp CreateOrGetScreenTimeApp(string name, string path)
         {
-            if ((screenTimeApps.TryGetValue(name, out ScreenTimeApp? screenTimeApp) || screenTimeApps.TryGetValue(path, out screenTimeApp)) &&
-                screenTimeApp != null)
+            // If a ScreenTimeApp with the name exists, return the existing app and just update the path to the new one
+            // Path might change due to updates etc. so it's completely fine to just overwrite the path
+            if (screenTimeApps.TryGetValue(name, out ScreenTimeApp? screenTimeApp) && screenTimeApp != null)
+            {
+                screenTimeApp.Path = path;
+                return screenTimeApp;
+            }
+            // If the name differs but the path exists, return the existing ScreenTimeApp
+            else if (screenTimeApps.TryGetValue(path, out screenTimeApp) && screenTimeApp != null)
             {
                 return screenTimeApp;
             }
+            
             return new ScreenTimeApp(name, path, [], [], [], []);
         }
 
