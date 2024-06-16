@@ -46,7 +46,7 @@ namespace ScreenTime.classes
             {
                 return screenTimeApp;
             }
-            
+
             return new ScreenTimeApp(name, path, [], [], [], []);
         }
 
