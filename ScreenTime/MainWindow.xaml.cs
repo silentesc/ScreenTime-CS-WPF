@@ -34,7 +34,7 @@ namespace ScreenTime
             DateTime today = DateTime.Today;
             DateTime tomorrow = today.AddDays(1);
 
-            DateSelector.BlackoutDates.Add(new CalendarDateRange(tomorrow, DateTime.MaxValue ));
+            DateSelector.BlackoutDates.Add(new CalendarDateRange(tomorrow, DateTime.MaxValue));
 
         }
 
