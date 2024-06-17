@@ -25,6 +25,17 @@ namespace ScreenTime
             SetScreenTimeAppsForMainScreen();
             // Set default item in filter combo box
             FilterComboBox.SelectedItem = FilterComboBox.Items[0];
+
+            BlockFutureDates();
+        }
+
+        private void BlockFutureDates()
+        {
+            DateTime today = DateTime.Today;
+            DateTime tomorrow = today.AddDays(1);
+
+            DateSelector.BlackoutDates.Add(new CalendarDateRange(tomorrow, DateTime.MaxValue ));
+
         }
 
         /*

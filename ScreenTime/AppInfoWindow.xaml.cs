@@ -22,6 +22,9 @@ namespace ScreenTime
             if (appName.Length > 15) appName = appName[..15] + "...";
 
             string appPath = screenTimeApp.Path;
+
+            string appPathUnshortened = screenTimeApp.Path;
+
             // Truncate long path names
             if (appPath.Length > 30) appPath = appPath[..30] + "...";
 
@@ -67,7 +70,7 @@ namespace ScreenTime
 
             ShowInFolderBtn.MouseDown += (s, e) =>
             {
-                System.Diagnostics.Process.Start("explorer.exe", $"/select, \"{appPath}\"");
+                System.Diagnostics.Process.Start("explorer.exe", $"/select, \"{appPathUnshortened}\"");
             };
 
             ShowInFolderBtn.MouseEnter += (s, e) =>

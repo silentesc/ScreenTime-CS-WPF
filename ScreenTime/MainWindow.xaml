@@ -115,6 +115,7 @@
                                     <VisualState x:Name="BlackoutDay">
                                         <Storyboard>
                                             <DoubleAnimation Duration="0" To=".2" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="Blackout"/>
+                                            <ColorAnimation Duration="0" To="#FF777777" Storyboard.TargetProperty="(TextElement.Foreground).(SolidColorBrush.Color)" Storyboard.TargetName="NormalText"/>
                                         </Storyboard>
                                     </VisualState>
                                 </VisualStateGroup>
@@ -131,7 +132,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
     </Window.Resources>
 
     <Grid x:Name="MainGrid">
@@ -182,7 +182,8 @@
                           Width="350"  
                           CalendarDayButtonStyle="{DynamicResource CalendarDayButtonStyle1}"
                           Grid.Row="1" 
-                          Margin="10,0,10,0"/>
+                          Margin="10,0,10,0">
+                </Calendar>
 
                 <ui:Button x:Name="TodayBtn"
                            Content="Today"
